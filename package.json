@@ -1,0 +1,23 @@
+{
+  "name": "myproject",
+  "version": "1.0.0",
+  "description": "RRR",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/300Zombies/myproject.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/300Zombies/myproject/issues"
+  },
+  "homepage": "https://github.com/300Zombies/myproject#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
