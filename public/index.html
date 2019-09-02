@@ -5,18 +5,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Chilanka&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./static/index.css">
-    <title>Canvas and socket.IO</title>
+    <title>( ಠ_ಠ)</title>
 </head>
 
 <body>
-    <ul id="messages"></ul>
-    <form action="">
-        <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.js"
-        integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+    <section>
+        <header>
+            some header info here
+        </header>
+        <main>
+            <div class="title">
+                <h1>SETUP AND PLAY</h1>
+            </div>
+            <div class="panels">
+                <div class="anonymous">
+                    <div class="user">
+                        <h2>QUICK PLAY</h2>
+                        <div class="portrait"></div>
+                        <div class="nickname">
+                            <span>Nickname: </span>
+                            <input id="nameinput" type="text" name="username" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="buttons">
+                        <button id="play">PLAY</button>
+                    </div>
+                </div>
+                <div class="or">
+                    AND
+                </div>
+                <div class="board">
+                    <div class="info">
+                        <h2>RULES:</h2>
+                        <ul class="rules">
+                            <li>No letters.</li>
+                            <li>No numbers.</li>
+                            <li>No symbols.</li>
+                            <li>Be nice to everyone.</li>
+                        </ul>
+                        <h2>NEWS</h2>
+                        <ul class="news">
+                            <li>version 0.1</li>
+                        </ul>
+                        <h2>FB LOGIN</h2>
+                        <p>soon...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            some footer info here
+        </footer>
+    </section>
     <script src="./static/index.js"></script>
 </body>
 

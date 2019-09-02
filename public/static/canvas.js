@@ -1,5 +1,5 @@
 window.addEventListener("load", () => {
-    const frame = document.querySelector("#canvas-frame");
+    // const frame = document.querySelector("#canvas-frame");
     const canvas = document.querySelector("#canvas");
     const ctx = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
