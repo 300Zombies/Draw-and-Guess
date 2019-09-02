@@ -1,35 +1,35 @@
-'use strict';
+"use strict";
 
 (function () {
 
     var socket = io();
-    var canvas = document.getElementsByClassName('whiteboard')[0];
-    var colors = document.getElementsByClassName('color');
-    var context = canvas.getContext('2d');
+    var canvas = document.getElementsByClassName("whiteboard")[0];
+    var colors = document.getElementsByClassName("color");
+    var context = canvas.getContext("2d");
 
     var current = {
-        color: 'black'
+        color: "black"
     };
     var drawing = false;
 
-    canvas.addEventListener('mousedown', onMouseDown, false);
-    canvas.addEventListener('mouseup', onMouseUp, false);
-    canvas.addEventListener('mouseout', onMouseUp, false);
-    canvas.addEventListener('mousemove', throttle(onMouseMove, 10), false);
+    canvas.addEventListener("mousedown", onMouseDown, false);
+    canvas.addEventListener("mouseup", onMouseUp, false);
+    canvas.addEventListener("mouseout", onMouseUp, false);
+    canvas.addEventListener("mousemove", throttle(onMouseMove, 10), false);
 
     //Touch support for mobile devices
-    canvas.addEventListener('touchstart', onMouseDown, false);
-    canvas.addEventListener('touchend', onMouseUp, false);
-    canvas.addEventListener('touchcancel', onMouseUp, false);
-    canvas.addEventListener('touchmove', throttle(onMouseMove, 10), false);
+    canvas.addEventListener("touchstart", onMouseDown, false);
+    canvas.addEventListener("touchend", onMouseUp, false);
+    canvas.addEventListener("touchcancel", onMouseUp, false);
+    canvas.addEventListener("touchmove", throttle(onMouseMove, 10), false);
 
     for (var i = 0; i < colors.length; i++) {
-        colors[i].addEventListener('click', onColorUpdate, false);
+        colors[i].addEventListener("click", onColorUpdate, false);
     }
 
-    socket.on('drawing', onDrawingEvent);
+    socket.on("drawing", onDrawingEvent);
 
-    window.addEventListener('resize', onResize, false);
+    window.addEventListener("resize", onResize, false);
     onResize();
 
 
@@ -48,7 +48,7 @@
         var w = canvas.width;
         var h = canvas.height;
 
-        socket.emit('drawing', {
+        socket.emit("drawing", {
             x0: x0 / w,
             y0: y0 / h,
             x1: x1 / w,
@@ -81,7 +81,7 @@
     }
 
     function onColorUpdate(e) {
-        current.color = e.target.className.split(' ')[1];
+        current.color = e.target.className.split(" ")[1];
     }
 
     // limit the number of events per second
