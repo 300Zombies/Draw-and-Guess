@@ -28,15 +28,22 @@
             </div>
             <div class="right">
                 <div class="frame">
-                    <!-- canvas goes here -->
+                    <canvas class="whiteboard"></canvas>
                 </div>
                 <div class="chat">
                     <!-- chat goes here -->
+                    <div id="messages"></div>
+                    <form action="">
+                        <input id="m" type="text" autocomplete="off" placeholder="make a guess...">
+                        <button>Send</button>
+                    </form>
                 </div>
             </div>
         </main>
         <footer></footer>
     </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script src="./static/gameroom.js"></script>
 </body>
 
 </html>

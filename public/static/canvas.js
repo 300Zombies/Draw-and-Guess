@@ -1,46 +1,113 @@
-window.addEventListener("load", () => {
-    // const frame = document.querySelector("#canvas-frame");
-    const canvas = document.querySelector("#canvas");
+"use strict";
+
+(function () {
+
+    const socket = io();
+    const canvas = document.getElementsByClassName("whiteboard")[0];
+    const colors = document.getElementsByClassName("color");
     const ctx = canvas.getContext("2d");
-    const rect = canvas.getBoundingClientRect();
-    // resizing inside window onload
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    // canvas.width = 500;
-    // canvas.height = 500;
-    console.log(canvas.offsetWidth, canvas.offsetHeight)
-    // variables
+
+    let current = {
+        color: "black"
+    };
     let drawing = false;
 
-    function start(e) {
-        console.log("started");
-        drawing = true;
-        draw(e);
+    canvas.addEventListener("mousedown", onMouseDown, false);
+    canvas.addEventListener("mouseup", onMouseUp, false);
+    canvas.addEventListener("mouseout", onMouseUp, false);
+    canvas.addEventListener("mousemove", throttle(onMouseMove, 10), false);
+
+    //Touch support for mobile devices
+    canvas.addEventListener("touchstart", onMouseDown, false);
+    canvas.addEventListener("touchend", onMouseUp, false);
+    canvas.addEventListener("touchcancel", onMouseUp, false);
+    canvas.addEventListener("touchmove", throttle(onMouseMove, 10), false);
+    for (let i = 0; i < colors.length; i++) {
+        colors[i].style.background = colors[i].className.split(" ")[1];
+        colors[i].addEventListener("click", onColorUpdate, false);
     }
 
-    function finish() {
-        console.log("finished");
-        drawing = false;
+    socket.on("drawing", onDrawingEvent);
+
+    window.addEventListener("resize", onResize, false);
+    onResize();
+
+
+    function drawLine(x0, y0, x1, y1, color, emit) {
         ctx.beginPath();
-    }
-
-
-    function draw(e) {
-        if (!drawing) return;
-        console.log("drawing");
-        ctx.lineWidth = 2;
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.strokeStyle = color;
         ctx.lineCap = "round";
-
-        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        ctx.lineWidth = 2;
         ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-        console.log(e.clientX, e.clientY);
-        console.log(rect.left, rect.top)
+        ctx.closePath();
+
+        if (!emit) {
+            return;
+        }
+        let w = canvas.width;
+        let h = canvas.height;
+
+        socket.emit("drawing", {
+            x0: x0 / w,
+            y0: y0 / h,
+            x1: x1 / w,
+            y1: y1 / h,
+            color: color
+        });
     }
-    // console.log(canvas.offsetLeft, canvas.offsetTop);
-    // eventListeners
-    canvas.addEventListener("mousedown", start);
-    canvas.addEventListener("mouseup", finish);
-    canvas.addEventListener("mousemove", draw);
-});
+
+    function onMouseDown(e) {
+        drawing = true;
+        current.x = e.clientX || e.touches[0].clientX;
+        current.y = e.clientY || e.touches[0].clientY;
+    }
+
+    function onMouseUp(e) {
+        if (!drawing) {
+            return;
+        }
+        drawing = false;
+        drawLine(current.x, current.y, e.clientX || e.touches[0].clientX, e.clientY || e.touches[0].clientY, current.color, true);
+    }
+
+    function onMouseMove(e) {
+        if (!drawing) {
+            return;
+        }
+        drawLine(current.x, current.y, e.clientX || e.touches[0].clientX, e.clientY || e.touches[0].clientY, current.color, true);
+        current.x = e.clientX || e.touches[0].clientX;
+        current.y = e.clientY || e.touches[0].clientY;
+    }
+
+    function onColorUpdate(e) {
+        current.color = e.target.className.split(" ")[1];
+    }
+
+    // limit the number of events per second
+    function throttle(callback, delay) {
+        let previousCall = new Date().getTime();
+        return function () {
+            let time = new Date().getTime();
+
+            if ((time - previousCall) >= delay) {
+                previousCall = time;
+                callback.apply(null, arguments);
+            }
+        };
+    }
+
+    function onDrawingEvent(data) {
+        let w = canvas.width;
+        let h = canvas.height;
+        drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color);
+    }
+
+    // make the canvas fill its parent
+    function onResize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+})();

@@ -21,20 +21,16 @@ io.on("connection", (socket) => { // message synchronous
     socket.on("disconnect", () => {
         console.log("user disconnected");
     });
+    socket.on("drawing", (data) => {
+        socket.broadcast.emit("drawing", data);
+    });
 });
 
-function onConnection(socket) { // canvas synchronous
-    // message synchronous
-    // socket.on("chat message", function (msg) {
-    //     io.emit("chat message", msg);
-    // });
-    // socket.on("disconnect", () => {
-    //     console.log("user disconnected");
-    // });
-    // canvas synchronous
-    socket.on("drawing", (data) => {
-        socket.broadcast.emit("drawing", data)
-    });
-}
+// function onConnection(socket) { // canvas synchronous
+//     socket.on("drawing", (data) => {
+//         socket.broadcast.emit("drawing", data);
+//         console.log(data)
+//     });
+// }
 
-io.on("connection", onConnection);
+// io.on("connection", onConnection);

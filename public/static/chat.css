@@ -3,14 +3,11 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Chilanka", cursive, sans-serif;
+    font-size: 20px;
 }
 
 ul {
     list-style: none;
-}
-
-body {
-    font: 13px Helvetica, Arial;
 }
 
 form {
@@ -21,11 +18,12 @@ form {
     width: 100%;
 }
 
-form input {
+#m {
     border: 0;
     padding: 10px;
     width: 90%;
     margin-right: .5%;
+    font-family: sans-serif;
 }
 
 form button {
@@ -43,6 +41,7 @@ form button {
 
 #messages li {
     padding: 5px 10px;
+    font-family: sans-serif;
 }
 
 #messages li:nth-child(odd) {
