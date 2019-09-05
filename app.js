@@ -13,6 +13,12 @@ app.use(bodyParser.urlencoded({ // urlencoded is <form>'s default data type
 }));
 app.use(bodyParser.json()); // now body-parser can parse <form>'s json
 
+// io.on('connection', function(socket){
+//     socket.emit('request', /* */); // emit an event to the socket
+//     io.emit('broadcast', /* */); // emit an event to all connected sockets
+//     socket.on('reply', function(){ /* */ }); // listen to the event
+//   });
+
 io.on("connection", (socket) => { // message synchronous
     console.log("a user connected");
     socket.on("chat message", function (msg) {
@@ -25,12 +31,3 @@ io.on("connection", (socket) => { // message synchronous
         socket.broadcast.emit("drawing", data);
     });
 });
-
-// function onConnection(socket) { // canvas synchronous
-//     socket.on("drawing", (data) => {
-//         socket.broadcast.emit("drawing", data);
-//         console.log(data)
-//     });
-// }
-
-// io.on("connection", onConnection);

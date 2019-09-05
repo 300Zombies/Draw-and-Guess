@@ -34,7 +34,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     canvas.addEventListener("mouseout", onMouseUp, false);
     canvas.addEventListener("mousemove", throttle(onMouseMove, 10), false);
 
-    //Touch support for mobile devices
+    // Touch support for mobile devices (removed)
     canvas.addEventListener("touchstart", onMouseDown, false);
     canvas.addEventListener("touchend", onMouseUp, false);
     canvas.addEventListener("touchcancel", onMouseUp, false);
@@ -49,7 +49,6 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
 
     window.addEventListener("resize", onResize, false);
     onResize();
-
 
     function drawLine(x0, y0, x1, y1, color, emit) {
         ctx.beginPath();
@@ -78,25 +77,28 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
 
     function onMouseDown(e) {
         drawing = true;
-        current.x = e.clientX - frame.offsetLeft || e.touches[0].clientX - frame.offsetLeft;
-        current.y = e.clientY - frame.offsetTop || e.touches[0].clientY - frame.offsetTop;
-        drawLine(current.x, current.y, e.clientX - frame.offsetLeft || e.touches[0].clientX, e.clientY - frame.offsetTop || e.touches[0].clientY, current.color, true);
+        current.x = e.clientX - canvas.offsetLeft;
+        current.y = e.clientY - canvas.offsetTop;
+        drawLine(current.x, current.y, e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop, current.color, true);
     }
 
     function onMouseUp() {
-        if (!drawing) {
-            return;
-        }
+        // if (!drawing) {
+        //     return;
+        // }
         drawing = false;
     }
 
-    function onMouseMove(e) { // handle condition where mousedown in canvas and mouseup outside canvas
+    function onMouseMove(e) { // TODO: handle condition where mousedown in canvas and mouseup outside canvas
         if (!drawing) {
             return;
         }
-        drawLine(current.x, current.y, e.clientX - frame.offsetLeft || e.touches[0].clientX, e.clientY - frame.offsetTop || e.touches[0].clientY, current.color, true);
-        current.x = e.clientX - frame.offsetLeft || e.touches[0].clientX - frame.offsetLeft;
-        current.y = e.clientY - frame.offsetTop || e.touches[0].clientY - frame.offsetTop;
+        drawLine(current.x, current.y, e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop, current.color, true);
+        current.x = e.clientX - canvas.offsetLeft;
+        current.y = e.clientY - canvas.offsetTop;
+        if (!drawing) {
+            return;
+        }
     }
 
     function onColorUpdate(e) {
