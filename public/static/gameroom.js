@@ -1,10 +1,44 @@
 // "use strict";
 window.addEventListener("load", () => { // change jQuery back to vanilla JavaScript
     const socket = io();
+    // chat
     const form = document.querySelector("form");
     const m = document.querySelector("#m");
-    const name = sessionStorage.getItem("name");
+    const name = (sessionStorage.getItem("name")).toString();
+    const left = document.querySelector(".left");
     sessionStorage.removeItem("name");
+    socket.emit("join room", name); // may change to player.name
+    socket.on("add player", (players) => {
+        // render player list
+        left.innerHTML = "";
+        console.log(players);
+        console.log(`${players[players.length-1].name} joined the game`);
+        players.forEach((element) => {
+            let card = document.createElement("div");
+            card.classList.add("card");
+            let role = document.createElement("div");
+            role.classList.add("role");
+            let pic = document.createElement("div");
+            pic.classList.add("pic");
+            let status = document.createElement("div");
+            status.classList.add("status");
+            let playerName = document.createElement("div");
+            playerName.classList.add("name");
+            playerName.textContent = element.name;
+            let score = document.createElement("div");
+            score.classList.add("score");
+            score.textContent = `score: ${element.score}`;
+            let next = document.createElement("div");
+            next.classList.add("next");
+            status.appendChild(playerName);
+            status.appendChild(score);
+            status.appendChild(next);
+            card.appendChild(role);
+            card.appendChild(pic);
+            card.appendChild(status);
+            left.appendChild(card);
+        });
+    });
     form.onsubmit = (e) => {
         e.preventDefault();
         socket.emit("chat message", `${name}: ${m.value}`);
@@ -19,6 +53,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         messages.appendChild(text);
         messages.scrollTop = messages.scrollHeight;
     });
+    // canvas
     const canvas = document.getElementsByClassName("whiteboard")[0];
     const colors = document.getElementsByClassName("color");
     const ctx = canvas.getContext("2d");
