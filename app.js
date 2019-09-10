@@ -24,27 +24,39 @@ class Player {
     constructor(name, id) {
         this.name = name;
         this.id = id;
-        this.score = 0
+        this.score = 0;
+        this.drawing = true;
+        // this.canvas = null;
     }
 }
 // let clients = [];
+let currentCanvas;
 let players = [];
 io.on("connection", (socket) => {
     console.log("a user connected");
     socket.on("join room", (name) => {
+        let i = players.findIndex((e) => { // e == elements
+            return e.drawing === true;
+        });
+
         // get canvas context
         players.push(new Player(name, socket.id));
         console.log(socket.id)
-        console.log("players arr ", players);
-        io.emit("add player", players);
+        console.log("players arr", players);
+        socket
+        io.emit("render player", players);
     });
     socket.on("chat message", (msg) => {
         io.emit("chat message", msg);
     });
     socket.on("disconnect", () => {
         console.log("user disconnected");
-        let i = players.findIndex(e => e.id === socket.id);
+        // let i = players.findIndex(e => e.id === socket.id);
+        let i = players.findIndex((e) => { // e == elements
+            return e.id === socket.id
+        });
         players.splice(i, 1);
+        io.emit("render player", players);
         console.log("indexof: ", i);
         console.log("players arr ", players);
     });

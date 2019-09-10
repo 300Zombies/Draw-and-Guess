@@ -6,13 +6,15 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     const m = document.querySelector("#m");
     const name = (sessionStorage.getItem("name")).toString();
     const left = document.querySelector(".left");
-    sessionStorage.removeItem("name");
-    socket.emit("join room", name); // may change to player.name
-    socket.on("add player", (players) => {
+    // sessionStorage.removeItem("name");
+    socket.emit("join room", name);
+
+    socket.on("render player", (players) => {
         // render player list
         left.innerHTML = "";
         console.log(players);
         console.log(`${players[players.length-1].name} joined the game`);
+        console.log(socket.id);
         players.forEach((element) => {
             let card = document.createElement("div");
             card.classList.add("card");
@@ -59,6 +61,13 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     const ctx = canvas.getContext("2d");
     const frame = document.querySelector(".frame");
 
+    // request drawer canvas
+
+    // recieve drawer canvas
+
+    // canvas init
+    // canvas.drawImage(sourceCanvas, 0, 0);
+
     let current = {
         color: "black",
     };
@@ -80,7 +89,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         colors[i].addEventListener("click", onColorUpdate, false);
     }
 
-    socket.on("drawing", onDrawingEvent);
+    socket.on("drawing", onDrawingEvent); // listen for "drawing"
 
     window.addEventListener("resize", onResize, false);
     onResize();

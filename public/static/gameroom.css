@@ -53,8 +53,8 @@ main {
     width: 25%;
     height: 100%;
     background: #ddd;
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
 }
 
 .card {
