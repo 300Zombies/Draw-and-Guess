@@ -8,13 +8,11 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     const left = document.querySelector(".left");
     // sessionStorage.removeItem("name");
     socket.emit("join room", name);
-
     socket.on("render player", (players) => {
         // render player list
         left.innerHTML = "";
-        console.log(players);
         console.log(`${players[players.length-1].name} joined the game`);
-        console.log(socket.id);
+        console.log("players", players);
         players.forEach((element) => {
             let card = document.createElement("div");
             card.classList.add("card");
@@ -50,23 +48,17 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     socket.on("chat message", (msg) => {
         const messages = document.querySelector("#messages");
         const text = document.createElement("div");
-
         text.textContent = msg;
         messages.appendChild(text);
         messages.scrollTop = messages.scrollHeight;
     });
     // canvas
-    const canvas = document.getElementsByClassName("whiteboard")[0];
-    const colors = document.getElementsByClassName("color");
+    const canvas = document.querySelector(".whiteboard");
+    // const colors = document.querySelector(".color");
     const ctx = canvas.getContext("2d");
     const frame = document.querySelector(".frame");
+    console.log("this is context.canvas", ctx.canvas)
 
-    // request drawer canvas
-
-    // recieve drawer canvas
-
-    // canvas init
-    // canvas.drawImage(sourceCanvas, 0, 0);
 
     let current = {
         color: "black",
@@ -84,15 +76,42 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     canvas.addEventListener("touchcancel", onMouseUp, false);
     canvas.addEventListener("touchmove", throttle(onMouseMove, 10), false);
 
-    for (let i = 0; i < colors.length; i++) { // colors
-        colors[i].style.background = colors[i].className.split(" ")[1];
-        colors[i].addEventListener("click", onColorUpdate, false);
-    }
+    // for (let i = 0; i < colors.length; i++) { // colors
+    //     colors[i].style.background = colors[i].className.split(" ")[1];
+    //     colors[i].addEventListener("click", onColorUpdate, false);
+    // }
 
     socket.on("drawing", onDrawingEvent); // listen for "drawing"
 
     window.addEventListener("resize", onResize, false);
     onResize();
+
+    // equal to on connectcion
+    socket.emit("canvas init", "newcomer requesting canvas data");
+    // equal to on connectcion
+
+    socket.on("canvas init", (msg) => {
+        console.log(msg)
+        // only drawer can see this
+        // grab the context from your destination canvas
+        let png = canvas.toDataURL();
+        // emit canvas data to server
+        socket.emit("fresh canvas", png);
+    });
+    // recieve drawer canvas
+    socket.on("fresh canvas", (data) => {
+        // only newcomer will see this
+        console.log("fresh canvas revieced");
+        let img = new Image();
+        img.src = data;
+        img.onload = function () {
+            // *** img is created after window.onload ***
+            // *** wait until img loaded then draw on canvas ***
+            ctx.drawImage(img, 0, 0);
+        }
+        // img could be HTML Image, Video, Canvas Element
+        console.log("draw img on canvas");
+    });
 
     function drawLine(x0, y0, x1, y1, color, emit) {
         ctx.beginPath();
@@ -133,7 +152,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         drawing = false;
     }
 
-    function onMouseMove(e) { // TODO: handle condition where mousedown in canvas and mouseup outside canvas
+    function onMouseMove(e) {
         if (!drawing) {
             return;
         }

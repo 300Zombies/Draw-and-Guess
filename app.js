@@ -25,42 +25,52 @@ class Player {
         this.name = name;
         this.id = id;
         this.score = 0;
-        this.drawing = true;
-        // this.canvas = null;
+        this.drawing = false;
     }
 }
-// let clients = [];
-let currentCanvas;
 let players = [];
 io.on("connection", (socket) => {
     console.log("a user connected");
     socket.on("join room", (name) => {
-        let i = players.findIndex((e) => { // e == elements
-            return e.drawing === true;
-        });
-
-        // get canvas context
         players.push(new Player(name, socket.id));
-        console.log(socket.id)
-        console.log("players arr", players);
-        socket
+        if (players.length === 1) {
+            players[0].drawing = true; // first player === default drawer
+        }
+        console.log("players", players);
         io.emit("render player", players);
     });
     socket.on("chat message", (msg) => {
+        // emit to all sockets including event sender
         io.emit("chat message", msg);
     });
     socket.on("disconnect", () => {
         console.log("user disconnected");
         // let i = players.findIndex(e => e.id === socket.id);
-        let i = players.findIndex((e) => { // e == elements
+        let i = players.findIndex((e) => { // e === elements
             return e.id === socket.id
         });
         players.splice(i, 1);
         io.emit("render player", players);
-        console.log("indexof: ", i);
-        console.log("players arr ", players);
+        console.log("players", players);
+    });
+    // canvas sync
+    socket.on("canvas init", (msg) => {
+        console.log(msg)
+        // find current drawer
+        let i = players.findIndex((e) => {
+            return e.drawing === true;
+        });
+        console.log("current drawer socket id =", players[i].id);
+        // send to current drawer
+        io.to(players[i].id).emit("canvas init", "server resquesting canvas data");
+    });
+    socket.on("fresh canvas", (png) => {
+        console.log("socket.id request canvas", players[players.length - 1].id)
+        // send to newcomer
+        io.to(players[players.length - 1].id).emit("fresh canvas", png);
     });
     socket.on("drawing", (data) => {
+        // emit to all socket BUT event sender
         socket.broadcast.emit("drawing", data);
     });
 });
