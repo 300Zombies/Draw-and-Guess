@@ -109,9 +109,158 @@ main {
 }
 
 .frame {
+    position: relative;
+    /* this breaks cursor/canvas offset setting */
     width: 100%;
     height: 70%;
     background: #bbb;
+}
+
+.barrier {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.whiteboard {
+    position: absolute;
+}
+
+.info {
+    position: absolute;
+    width: 70%;
+    height: 60%;
+    left: 15%;
+    top: 20%;
+    border: 1px solid black;
+    border-radius: 12px;
+    background: #fff;
+    z-index: 2;
+}
+
+.info-header {
+    position: absolute;
+    width: 100%;
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.5s ease;
+}
+
+.start-h1::before {
+    content: "GAME START";
+}
+
+.select-h1::before {
+    content: "SELECT";
+}
+
+.wait-h1::before {
+    content: "WAITING";
+}
+
+.master-h1::before {
+    content: "MASTER PIECE";
+}
+
+.answer-h1::before {
+    content: "ANSWER:";
+}
+
+.winner-h1::before {
+    content: "WINNER:"
+}
+
+.info-panel {
+    position: absolute;
+    top: 60%;
+    width: 100%;
+    height: 40%;
+    display: flex;
+    justify-content: space-around;
+    transition: 0.5s ease;
+}
+
+.info-btn {
+    position: relative;
+    top: 35%;
+    width: 25%;
+    height: 30%;
+    border: 1px solid #000;
+    border-radius: 12px;
+    text-align: center;
+    padding-top: 5px;
+}
+
+.select-btn {
+    position: relative;
+    top: 35%;
+    width: 25%;
+    height: 30%;
+    border: 1px solid #000;
+    border-radius: 12px;
+    text-align: center;
+    padding-top: 5px;
+}
+
+.next-one {
+    position: absolute;
+    top: 80%;
+    width: 100%;
+    height: 20%;
+    text-align: center;
+}
+
+.topic-header {
+    position: absolute;
+    width: 100%;
+    height: 35%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.5s ease;
+    /* position: absolute;
+    width: 100%;
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+
+.topic-panel {
+    position: absolute;
+    top: 35%;
+    width: 100%;
+    height: 65%;
+    display: flex;
+    justify-content: space-around;
+    transition: 0.5s ease;
+}
+
+.timer-box {
+    position: absolute;
+    top: 95%;
+    left: 5%;
+    width: 90%;
+    height: 2.5%;
+    background: #fff;
+    border-radius: 6px;
+    z-index: 1;
+}
+
+.countdown {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #999;
+    border-radius: 6px;
+    transition: width linear;
+}
+
+.deactivated {
+    display: none;
 }
 
 .chat {

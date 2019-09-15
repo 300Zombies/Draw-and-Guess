@@ -1,20 +1,34 @@
 // MySQL Initialization
 const mysql = require("mysql");
-const mysqlCon = mysql.createPool({
-	connectionLimit: 10,
+const pool = mysql.createPool({
+	connectionLimit: 100,
 	host: "localhost",
 	user: "root",
-	password: "******",
-	database: "gartic"
+	password: "a02750687138",
+	database: "gartic",
+	acquireTimeout: 10000,
+	waitForConnections: true,
+	queueLimit: 10000,
 });
-mysqlCon.connect((err) => {
-	if (err) {
-		throw err;
-	} else {
-		console.log("Database Connected!");
-	}
-});
+// pool.connect((err) => {
+// 	if (err) {
+// 		throw err;
+// 	} else {
+// 		console.log("Database Connected!");
+// 	}
+// });
+const sqlQuery = function (query, data) {
+	return new Promise((resolve, reject) => {
+		pool.query(query, data, (err, result) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(result);
+			}
+		});
+	});
+};
 module.exports = {
 	core: mysql,
-	con: mysqlCon
+	con: sqlQuery
 };
