@@ -161,16 +161,20 @@ main {
     content: "WAITING";
 }
 
+.skipped-h1::before {
+    content: "SKIPPED";
+}
+
 .master-h1::before {
-    content: "MASTER PIECE";
+    content: "MASTERPIECE";
 }
 
 .answer-h1::before {
-    content: "ANSWER:";
+    content: "ANSWER";
 }
 
 .winner-h1::before {
-    content: "WINNER:"
+    content: "WINNER";
 }
 
 .info-panel {
@@ -236,7 +240,7 @@ main {
     height: 65%;
     display: flex;
     justify-content: space-around;
-    transition: 0.5s ease;
+    /* transition: 0.5s ease; */
 }
 
 .timer-box {
@@ -256,7 +260,18 @@ main {
     height: 100%;
     background: #999;
     border-radius: 6px;
-    transition: width linear;
+}
+
+/* timerbar animation */
+
+@keyframes timebar {
+    0% {
+        width: 100%;
+    }
+
+    100% {
+        width: 0;
+    }
 }
 
 .deactivated {

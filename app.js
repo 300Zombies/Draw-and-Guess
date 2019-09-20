@@ -26,6 +26,11 @@ class Game {
         this.on = false;
         this.players = [];
         this.topicPool = [];
+        this.topic = "";
+        this.timer = "";
+        this.interval = "";
+        this.guessed = 0;
+        this.now = 0;
     }
     add(player) {
         this.players.push(player)
@@ -36,9 +41,18 @@ class Game {
             [arr[i], arr[j]] = [arr[j], arr[i]];
         }
     }
-    topic(arr) {
+    topicPair(arr) {
         let topic = arr.splice(0, 2);
         return topic
+    }
+    countdown(milsec, cb) {
+        // this.interval = setInterval(() => {
+        //     game.now++;
+        // }, 1000);
+        console.log(`${milsec/1000}s timer`);
+        this.timer = setTimeout(() => {
+            cb();
+        }, milsec);
     }
 }
 // player object
@@ -48,29 +62,74 @@ class Player {
         this.id = id;
         this.score = 0;
         this.drawing = false;
+        this.haveDrawn = false;
     }
 }
 let players = [];
 let game = new Game();
 io.on("connection", (socket) => {
     console.log("a user connected");
-    socket.on("join room", (name) => {
-        // build game object
+    socket.on("join room", (name) => { // ok
         // check if name duplicated
-        // push players
         game.players.push(new Player(name, socket.id));
+
+        // drawer assignment should be in start game event
         if (game.players.length === 1) {
-            game.players[0].drawing = true; // first player === default drawer
+            // first player == default drawer
+            game.players[0].drawing = true;
         }
-        console.log("game object", game);
-        // pass latest players to front-end
-        io.emit("render player", game.players);
+
+        // pass latest players to frontend
+        let gameStatus = {
+            on: game.on,
+            now: game.now,
+            players: game.players
+        }
+        io.emit("render player", gameStatus);
     });
-    socket.on("chat message", (msg) => {
+    socket.on("chat message", (player) => { // ok
+        // check current player number every chat event
+        let playing = game.players.length;
+        let msg;
+        if (player.answer === game.topic) { // check if hit
+            // hit and calculate score
+            let i = game.players.findIndex((e) => { // e === elements
+                return e.id === socket.id
+            });
+            game.players[i].score += 10;
+            socket.emit("you hit");
+            io.emit("update score", game.players);
+            msg = `${player.name}: HIT THE ANSWER!!`;
+            game.guessed += 1;
+            if (game.guessed === playing - 1) { // masterpiece event
+                clearTimeout(game.timer); // break drawing phase
+                // change drawer
+                let i = game.players.findIndex((e) => {
+                    return e.drawing === true;
+                });
+                game.players[i].drawing = false;
+
+                if (i + 1 === game.players.length) {
+                    game.players[0].drawing = true;
+                    io.to(game.players[0].id).emit("time up");
+                } else {
+                    game.players[i + 1].drawing = true;
+                    io.to(game.players[i + 1].id).emit("time up");
+                }
+                let expired = Date.now() + (10 * 1000);
+                io.emit("frontend timer", expired);
+
+                io.emit("masterpiece");
+                game.guessed = 0;
+                return
+            }
+        } else {
+            msg = `${player.name}: ${player.answer}`;
+        }
         // emit to all sockets including event sender
         io.emit("chat message", msg);
     });
-    socket.on("disconnect", () => {
+    socket.on("disconnect", () => { // TODO: incomplete
         // player disconnect while game started, especially drawing persion
         console.log("user disconnected");
         // let i = players.findIndex(e => e.id === socket.id);
@@ -80,6 +139,8 @@ io.on("connection", (socket) => {
         // update players and drawing status
         if (game.players[i].drawing === true) {
             // handle drawing person leave
+            clearTimeout(game.timer);
+            // clearInterval(game.interval);
             io.emit("drawer leaved");
             if (i + 1 === game.players.length) {
                 game.players[0].drawing = true;
@@ -90,11 +151,16 @@ io.on("connection", (socket) => {
         game.players.splice(i, 1);
         // send to everyone
         console.log(game.players)
-        io.emit("render player", game.players);
+        let gameStatus = {
+            on: game.on,
+            now: game.now,
+            players: game.players
+        }
+        io.emit("render player", gameStatus);
         // prevent error
     });
     // canvas sync
-    socket.on("canvas init", (msg) => {
+    socket.on("canvas init", (msg) => { // ok
         console.log(msg)
         // find current drawer
         let i = game.players.findIndex((e) => {
@@ -113,58 +179,106 @@ io.on("connection", (socket) => {
         // emit to all socket BUT event sender
         socket.broadcast.emit("drawing", data);
     });
-    socket.on("game start", async (msg) => {
-        // game on!
+    socket.on("game start", async () => {
+        // only host can init game start event
+        // must have 2 up player to start
+        // game object init
         game.on = true;
-        // get topics from database
+        game.guessed = 0;
         game.topicPool = await mysql.con(`select title from animals`);
-        // map pool
+        // map topicPool
         game.topicPool = game.topicPool.map((e) => {
             return e.title
         });
-        game.shuffle(game.topicPool)
-        console.log(msg)
+        game.shuffle(game.topicPool);
+        console.log("let the games begin");
         let session = {
-            topic: game.topic(game.topicPool),
+            topic: game.topicPair(game.topicPool),
             expired: Date.now() + (10 * 1000)
         }
-        console.log(session)
-        // emit two topics and expired time to drawing person
-        socket.emit("pick one", session);
-        // emit expired time to others
-        socket.broadcast.emit("picking topic", session.expired);
-        // start a short countdown to picking/waiting topic selection
-
-        // console.log(Date.now())
-        // quiz = {
-        //     topic: topic,
-        //     timeup: Date.now() + (10 * 1000)
-        // }
-        // socket.broadcast.emit("game started", quiz)
-        // setTimeout(() => {
-
-        // }, timeout);
+        // emit topic pair to draw
+        socket.emit("pick one", session.topic);
+        // emit expired time to everyone
+        io.emit("frontend timer", session.expired); // picking topic
     });
-    socket.on("player skipped", () => {
-        // round start
-        // next one pick topics
-        console.log(socket.id, "has skipped the turn");
-        let i = game.players.findIndex((e) => {
-            return e.drawing === true;
-        });
-        // assign new drawer
-        if (i + 1 === game.players.length) {
-            game.players[0].drawing = true;
-        } else {
-            game.players[i + 1].drawing = true;
+    socket.on("round start", () => { // currently not called
+        console.log("round start");
+        let session = {
+            topic: game.topicPair(game.topicPool),
+            expired: Date.now() + (10 * 1000)
         }
-        // io.emit("round start", game.players);
+        // emit topic pair to drawer
+        socket.emit("pick one", session.topic);
+        // emit expired time to everyone
+        io.emit("frontend timer", session.expired); // picking topic
     });
-    socket.on("round start", (theTopic) => {
-        // topic picked
-        console.log(theTopic)
-        // use this to verify if there's answer in chat msg
-    })
+    socket.on("pick 10 sec", () => {
+        game.guessed = 0;
+        // timer
+        game.countdown(10 * 1000, () => {
+            // if timeout change drawing status next one pick topics
+            console.log(socket.id, "has skipped the turn");
+            let i = game.players.findIndex((e) => {
+                return e.drawing === true;
+            });
+            game.players[i].drawing = false;
+
+            if (i + 1 === game.players.length) {
+                game.players[0].drawing = true;
+                io.to(game.players[0].id).emit("time up");
+            } else {
+                game.players[i + 1].drawing = true;
+                io.to(game.players[i + 1].id).emit("time up");
+            }
+            let expired = Date.now() + (10 * 1000);
+            io.emit("player skipped"); // tell frontend do display work
+            io.emit("frontend timer", expired); // init frontend timer
+            // io.emit("update score", game.players);
+            // console.log("update player stat", game.players);
+        });
+    });
+    socket.on("topic picked", (theTopic) => {
+        console.log("topic picked");
+        clearTimeout(game.timer);
+        console.log(theTopic);
+        game.topic = theTopic;
+        // clearInterval(game.interval);
+        let expired = Date.now() + (20 * 1000);
+        // send to drawer enable drawing and countdown
+        socket.emit("start drawing", expired);
+        // send to others enable msg and start countdown
+        socket.broadcast.emit("start guessing", expired);
+        io.emit("frontend timer", expired); // draw and guess
+    });
+    socket.on("wait 10 sec", () => {
+        // after skipping screen, emit round end to drawer
+        game.countdown(10 * 1000, () => {
+            socket.emit("round end");
+            socket.broadcast.emit("guess end");
+        });
+    });
+    socket.on("draw 60 sec", () => { // TODO:
+        // start drawing countdown
+        game.countdown(20 * 1000, () => {
+            let i = game.players.findIndex((e) => {
+                return e.drawing === true;
+            });
+            game.players[i].drawing = false;
+            // assign next drawer
+            if (i + 1 === game.players.length) {
+                game.players[0].drawing = true;
+                io.to(game.players[0].id).emit("time up");
+            } else {
+                game.players[i + 1].drawing = true;
+                io.to(game.players[i + 1].id).emit("time up");
+            }
+            let expired = Date.now() + (10 * 1000);
+            io.emit("frontend timer", expired);
+            // tell everyone player skipped and countdown 10 sec
+            io.emit("show answer", game.topic);
+            io.emit("block canvas and chat");
+        });
+    });
 });
 // The Fisher–Yates shuffle
 function shuffle(arr) {
@@ -173,7 +287,22 @@ function shuffle(arr) {
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
 }
-
+// discarded
+function assignDrawer(players) { // run twice to get 2 drawer for now/next
+    // build array with players haven't draw 
+    players.forEach((e) => {
+        if (e.haveDrawn === false) {
+            game.playerPool.push(e);
+        }
+    });
+    // randomly pick one become drawer
+    let i = Math.floor(Math.random() * game.playerPool.length);
+    game.playerPool[i].drawing = true;
+    // remove drawer to drawer array
+    let drawer = game.playerPool.splice(i, 1);
+    game.drawerPool.push(drawer);
+}
+// experiment
 function stepOne(timeout) {
     console.log("step 1")
     setTimeout(() => {
@@ -193,15 +322,6 @@ function stepThree(timeout) {
     setTimeout(() => {
         stepOne(1000)
     }, timeout);
-}
-let cdl = 0
-
-function countdownLoop(ms, cb) {
-    setTimeout(() => {
-        console.log(cdl)
-        cdl++
-        cb(ms, cb)
-    }, ms)
 }
 // countdownLoop(1000, countdownLoop)
 // testchat

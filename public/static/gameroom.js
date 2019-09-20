@@ -1,7 +1,5 @@
 // "use strict";
 window.addEventListener("load", () => { // change jQuery back to vanilla JavaScript
-    // timer for timeouts
-    let timer;
     // test area
     const countdown = document.querySelector(".countdown");
     // countdown.addEventListener("click", () => {
@@ -22,9 +20,20 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     const selectBtns = document.querySelectorAll(".select-btn");
     const nextOne = document.querySelector(".next-one");
     const barrier = document.querySelector(".barrier");
+    const sendBtn = document.querySelector(".send");
+    // TODO: game start btn
+    // canvas
+    const canvas = document.querySelector(".whiteboard");
+    // const colors = document.querySelector(".color");
+    const ctx = canvas.getContext("2d");
+    const frame = document.querySelector(".frame");
+    // console.log("this is context.canvas", ctx.canvas);
+
     btnY.addEventListener("click", () => {
-        console.log("btnY clicked")
-        socket.emit("game start", "let the games begin");
+        // theoretically start game event should emit only once per game
+        socket.emit("game start");
+        socket.emit("pick 10 sec");
+        // socket.emit("round start");
         headline.classList.remove("start-h1");
         headline.classList.add("select-h1");
         infoBtns.forEach((e) => {
@@ -36,20 +45,15 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             e.classList.remove("deactivated");
         });
     });
-    // only drawer has topic selection event
+    // TODO: only drawer has topic selection event
     selectBtns.forEach((e) => {
         e.addEventListener("click", function () {
             // drawer picked topic and send to server
-            socket.emit("round start", this.textContent);
-            // deactivated barrier for drawer
-            barrier.classList.add("deactivated");
-            info.classList.add("deactivated");
-            // stop current timeout
-            // start drawing timeout
+            socket.emit("topic picked", this.textContent);
+            socket.emit("draw 60 sec"); // timer
         });
     });
     // test area
-
     const socket = io();
     // chat
     const form = document.querySelector("form");
@@ -58,25 +62,28 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     const left = document.querySelector(".left");
     // sessionStorage.removeItem("name");
     socket.emit("join room", name);
-    socket.on("render player", (players) => {
+    socket.on("render player", (gameStatus) => {
         console.log("My socket.id =", socket.id);
+        let players = gameStatus.players;
+        // show everyone's socket.id when joined
         let i = players.findIndex((e) => { // e === elements
             return e.id === socket.id
         });
-        console.log("My index in players is", i);
+        // prepare drawer screen
         if (i === 0) {
             // something went wrong here
             // players[0] not always drawer
             console.log("I'm da host!")
             headline.classList.remove("wait-h1")
             headline.classList.add("start-h1")
-            infoBtns.forEach(e => {
+            infoBtns.forEach((e) => {
                 e.classList.remove("deactivated")
             });
         } else {
-            console.log("I'm da player!")
+            console.log("I'm not da host!");
         }
         nextOne.classList.add("deactivated");
+        // prepare drawer screen
         // render player list
         left.innerHTML = "";
         console.log(`${players[players.length-1].name} joined the game`);
@@ -106,47 +113,195 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             card.appendChild(status);
             left.appendChild(card);
         });
-        // reset timer length
+        // if game in progress TODO:
+        if (gameStatus.on) {
+            // do canvas init
+            socket.emit("canvas init", "newcomer requesting canvas data");
+        }
+    });
+    socket.on("update score", (players) => {
+        left.innerHTML = "";
+        players.forEach((e) => {
+            let card = document.createElement("div");
+            card.classList.add("card");
+            let role = document.createElement("div");
+            role.classList.add("role");
+            let pic = document.createElement("div");
+            pic.classList.add("pic");
+            let status = document.createElement("div");
+            status.classList.add("status");
+            let playerName = document.createElement("div");
+            playerName.classList.add("name");
+            playerName.textContent = e.name;
+            let score = document.createElement("div");
+            score.classList.add("score");
+            score.textContent = `score: ${e.score}`;
+            let next = document.createElement("div");
+            next.classList.add("next");
+            status.appendChild(playerName);
+            status.appendChild(score);
+            status.appendChild(next);
+            card.appendChild(role);
+            card.appendChild(pic);
+            card.appendChild(status);
+            left.appendChild(card);
+        });
     });
     form.onsubmit = (e) => {
         e.preventDefault();
-        socket.emit("chat message", `${name}: ${m.value}`);
+        // socket.name = name;
+        // socket.emit("chat message", `${name}: ${m.value}`);
+        socket.emit("chat message", {
+            name: name,
+            answer: m.value,
+            id: socket.id
+        });
         m.value = "";
         return false
     }
-    socket.on("game started", () => {
-        console.log("game started")
-        nextOne.classList.remove("deactivated")
+    // socket.on("game started", () => {
+    //     console.log("game started")
+    //     nextOne.classList.remove("deactivated")
+    // });
+    // socket.on("round start", () => {
+    //     // round start wait for drawer selection
+    // });
+    socket.on("pick one", (topic) => {
+        info.classList.remove("deactivated");
+        headline.className = "";
+        headline.classList.add("select-h1");
+        panel.classList.remove("deactivated");
+        infoBtns.forEach((e) => {
+            e.classList.add("deactivated");
+        });
+        selectBtns.forEach((e) => {
+            e.classList.remove("deactivated");
+        });
+        nextOne.classList.add("deactivated");
+        selectL.textContent = topic[0];
+        selectR.textContent = topic[1];
     });
-    socket.on("pick one", (session) => {
-        // render topic selection btns and start countdown
-        let milsec = session.expired - Date.now();
-        // picking topic countdown 10 sec
-        timer = setTimeout(() => {
-            socket.emit("player skipped");
-        }, milsec);
-        selectL.textContent = session.topic[0];
-        selectR.textContent = session.topic[1];
-        // display a short countdown
-        countdown.style.transitionDuration = `${milsec/1000}s`;
-        countdown.style.width = "0";
-        // allow drawing in eventlistener function
-        // send picked topic back to server
+    socket.on("player skipped", (expired) => {
+        // let sec = (expired - Date.now()) / 1000;
+        // timerBox.removeChild(countdown);
+        // timerBox.appendChild(countdown);
+        // countdown.style.animation = `timebar ${sec}s linear`;
+        info.classList.remove("deactivated");
+        headline.className = "";
+        headline.classList.add("skipped-h1");
+        // headline.textContent = "player skipped";
+        panel.classList.add("deactivated");
+        nextOne.classList.remove("deactivated");
+        nextOne.textContent = `player is next`;
     });
-    console.log(timer)
-    socket.on("player skipped", (players) => {
-        // assigned new drawer
+    socket.on("time up", () => { // next drawer only
+        socket.emit("wait 10 sec");
     });
-    socket.on("picking topic", (expired) => {
-        let milsec = expired - Date.now();
-        // display a short countdown
-        countdown.style.transitionDuration = `${milsec/1000}s`;
-        countdown.style.width = "0";
+    socket.on("block canvas and chat", () => {
+        barrier.classList.remove("deactivated");
+        m.value = "";
+        m.disabled = true;
+        sendBtn.disabled = true;
+    });
+    // *** timer event ***
+    socket.on("frontend timer", (expired) => {
+        // everyone gets the countdown
+        let sec = (expired - Date.now()) / 1000;
+        timerBox.removeChild(countdown);
+        timerBox.appendChild(countdown);
+        countdown.style.animation = `timebar ${sec}s linear`;
+        console.log(`frontend countdown ${sec}s`);
     });
     socket.on("drawer leaved", () => {
         // reset countdown width
-        countdown.style.transitionDuration = "";
-        countdown.style.width = "100%";
+        // countdown.style.transitionDuration = "";
+        // countdown.style.width = "100%";
+        // resetTimeBar();
+    });
+    socket.on("round end", () => {
+        // drawer recieved round end
+        socket.emit("round start");
+        socket.emit("pick 10 sec");
+        // show wait title
+        headline.className = "";
+        headline.classList.add("wait-h1");
+        info.classList.remove("deactivated");
+        nextOne.classList.remove("deactivated");
+        nextOne.textContent = `player is next`;
+        m.diabled = true;
+        sendBtn.disable = true;
+    });
+    socket.on("guess end", () => { // guessing person only
+        headline.className = "";
+        headline.classList.add("wait-h1");
+        info.classList.remove("deactivated");
+        nextOne.classList.remove("deactivated");
+        nextOne.textContent = `player is next`;
+        m.diabled = true;
+        sendBtn.disable = true;
+    })
+    socket.on("start guessing", () => {
+        // control player frontend element
+        console.log("start guessing")
+        info.classList.add("deactivated");
+        sendBtn.disabled = false;
+        m.disabled = false;
+        infoBtns.forEach((e) => {
+            e.classList.add("deactivated");
+        });
+        selectBtns.forEach((e) => {
+            e.classList.add("deactivated");
+        });
+    });
+    socket.on("start drawing", () => {
+        // control drawer frontend element
+        countdown.classList.add("running");
+        console.log("im drawing!");
+        // disable canvas barrier and info
+        barrier.classList.add("deactivated");
+        info.classList.add("deactivated");
+        infoBtns.forEach((e) => {
+            e.classList.add("deactivated");
+        });
+        selectBtns.forEach((e) => {
+            e.classList.add("deactivated");
+        });
+        // countdown moved to timer event
+    });
+    socket.on("you hit", () => {
+        // disable chat
+        console.log("you hit");
+        m.disabled = true;
+        sendBtn.disabled = true;
+    })
+    socket.on("masterpiece", () => {
+        // frontend timebar reset
+        // timerBox.removeChild(countdown);
+        // countdown.style.animation = "";
+        // timerBox.appendChild(countdown);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        headline.className = "";
+        headline.classList.add("master-h1");
+        info.classList.remove("deactivated");
+        nextOne.classList.remove("deactivated");
+        nextOne.textContent = `player is next`;
+        m.diabled = true;
+        sendBtn.disable = true;
+    });
+    socket.on("show answer", (answer) => {
+        // timerBox.removeChild(countdown);
+        // countdown.style.animation = "";
+        // timerBox.appendChild(countdown);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        headline.className = "";
+        headline.classList.add("answer-h1");
+        info.classList.remove("deactivated");
+        nextOne.classList.remove("deactivated");
+        nextOne.textContent = `player is next`;
+        // reset timeBar, start topic picking
+        m.diabled = true;
+        sendBtn.disable = true;
+        console.log(`answer is ${answer}`);
     });
     socket.on("chat message", (msg) => {
         const messages = document.querySelector("#messages");
@@ -156,10 +311,10 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         messages.scrollTop = messages.scrollHeight;
     });
     // canvas
-    const canvas = document.querySelector(".whiteboard");
+    // const canvas = document.querySelector(".whiteboard");
     // const colors = document.querySelector(".color");
-    const ctx = canvas.getContext("2d");
-    const frame = document.querySelector(".frame");
+    // const ctx = canvas.getContext("2d");
+    // const frame = document.querySelector(".frame");
     // console.log("this is context.canvas", ctx.canvas);
 
 
@@ -188,10 +343,6 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
 
     window.addEventListener("resize", onResize, false);
     onResize();
-
-    // equal to on connectcion
-    socket.emit("canvas init", "newcomer requesting canvas data");
-    // equal to on connectcion
 
     socket.on("canvas init", (msg) => {
         // console.log(msg)
