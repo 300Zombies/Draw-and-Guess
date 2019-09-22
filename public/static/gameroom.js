@@ -309,7 +309,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         // reset timeBar, start topic picking
         m.diabled = true;
         sendBtn.disable = true;
-        console.log(`winner is ${winner}`);
+        // console.log(`winner is ${winner}`);
     });
     socket.on("chat message", (msg) => {
         const messages = document.querySelector("#messages");
