@@ -33,8 +33,8 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         // theoretically start game event should emit only once per game
         socket.emit("game start");
         socket.emit("pick 10 sec");
-        // socket.emit("round start");
-        headline.classList.remove("start-h1");
+        headline.className = "";
+        headline.textContent = "";
         headline.classList.add("select-h1");
         infoBtns.forEach((e) => {
             // display none info btns
@@ -74,7 +74,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             // something went wrong here
             // players[0] not always drawer
             console.log("I'm da host!")
-            headline.classList.remove("wait-h1")
+            headline.className = "";
             headline.classList.add("start-h1")
             infoBtns.forEach((e) => {
                 e.classList.remove("deactivated")
@@ -159,15 +159,10 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         m.value = "";
         return false
     }
-    // socket.on("game started", () => {
-    //     console.log("game started")
-    //     nextOne.classList.remove("deactivated")
-    // });
-    // socket.on("round start", () => {
-    //     // round start wait for drawer selection
-    // });
     socket.on("pick one", (topic) => {
+        // drawer only event
         info.classList.remove("deactivated");
+        headline.textContent = "";
         headline.className = "";
         headline.classList.add("select-h1");
         panel.classList.remove("deactivated");
@@ -181,20 +176,19 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         selectL.textContent = topic[0];
         selectR.textContent = topic[1];
     });
-    socket.on("player skipped", (expired) => {
-        // let sec = (expired - Date.now()) / 1000;
-        // timerBox.removeChild(countdown);
-        // timerBox.appendChild(countdown);
-        // countdown.style.animation = `timebar ${sec}s linear`;
+    socket.on("player skipped", (player) => {
         info.classList.remove("deactivated");
         headline.className = "";
         headline.classList.add("skipped-h1");
-        // headline.textContent = "player skipped";
+        headline.textContent = "";
+        headline.textContent = player.last.name;
         panel.classList.add("deactivated");
         nextOne.classList.remove("deactivated");
-        nextOne.textContent = `player is next`;
+        nextOne.textContent = "";
+        nextOne.textContent = `${player.next.name} is next`;
     });
     socket.on("time up", () => { // next drawer only
+        // status === undefined if no value
         socket.emit("wait 10 sec");
     });
     socket.on("block canvas and chat", () => {
@@ -223,20 +217,25 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         socket.emit("round start");
         socket.emit("pick 10 sec");
         // show wait title
+
         headline.className = "";
         headline.classList.add("wait-h1");
+        headling.textContent = "";
         info.classList.remove("deactivated");
         nextOne.classList.remove("deactivated");
-        nextOne.textContent = `player is next`;
+        // nextOne.textContent = `player is next`;
+        nextOne.textContent = "";
         m.diabled = true;
         sendBtn.disable = true;
     });
     socket.on("guess end", () => { // guessing person only
         headline.className = "";
         headline.classList.add("wait-h1");
+        headline.textContent = "";
         info.classList.remove("deactivated");
         nextOne.classList.remove("deactivated");
-        nextOne.textContent = `player is next`;
+        nextOne.textContent = "";
+        // nextOne.textContent = `player is next`;
         m.diabled = true;
         sendBtn.disable = true;
     })
@@ -273,35 +272,44 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         console.log("you hit");
         m.disabled = true;
         sendBtn.disabled = true;
-    })
-    socket.on("masterpiece", () => {
-        // frontend timebar reset
-        // timerBox.removeChild(countdown);
-        // countdown.style.animation = "";
-        // timerBox.appendChild(countdown);
+    });
+    socket.on("masterpiece", (player) => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         headline.className = "";
         headline.classList.add("master-h1");
         info.classList.remove("deactivated");
         nextOne.classList.remove("deactivated");
-        nextOne.textContent = `player is next`;
+        nextOne.textContent = `${player.name} is next`;
         m.diabled = true;
         sendBtn.disable = true;
     });
-    socket.on("show answer", (answer) => {
-        // timerBox.removeChild(countdown);
-        // countdown.style.animation = "";
-        // timerBox.appendChild(countdown);
+    socket.on("show answer", (data) => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         headline.className = "";
+        headline.textContent = "";
         headline.classList.add("answer-h1");
+        headline.textContent = data.topic;
         info.classList.remove("deactivated");
         nextOne.classList.remove("deactivated");
-        nextOne.textContent = `player is next`;
+        nextOne.textContent = `${data.next.name} is next`;
         // reset timeBar, start topic picking
         m.diabled = true;
         sendBtn.disable = true;
-        console.log(`answer is ${answer}`);
+        console.log(`answer is ${data.topic}`);
+    });
+    socket.on("winner", (player) => { // TODO: pass variable
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        headline.textContent = "";
+        headline.textContent = ` ${player.winner.name}`;
+        headline.className = "";
+        headline.classList.add("winner-h1");
+        info.classList.remove("deactivated");
+        nextOne.classList.remove("deactivated");
+        nextOne.textContent = `${player.next.name} is next`;
+        // reset timeBar, start topic picking
+        m.diabled = true;
+        sendBtn.disable = true;
+        console.log(`winner is ${winner}`);
     });
     socket.on("chat message", (msg) => {
         const messages = document.querySelector("#messages");

@@ -26,7 +26,7 @@ CREATE TABLE `animals` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +35,7 @@ CREATE TABLE `animals` (
 
 LOCK TABLES `animals` WRITE;
 /*!40000 ALTER TABLE `animals` DISABLE KEYS */;
-INSERT INTO `animals` VALUES (1,'蝙蝠'),(2,'老鼠'),(3,'刺蝟'),(4,'石虎'),(5,'食蟻獸'),(6,'穿山甲'),(7,'水豚'),(8,'狐狸'),(9,'水母'),(10,'烏賊');
+INSERT INTO `animals` VALUES (1,'蝙蝠'),(2,'老鼠'),(3,'刺蝟'),(4,'石虎'),(5,'食蟻獸'),(6,'穿山甲'),(7,'水豚'),(8,'狐狸'),(9,'水母'),(10,'烏賊'),(11,'貓頭鷹'),(12,'眼鏡蛇'),(13,'鴨嘴獸'),(14,'無尾熊'),(15,'河馬'),(16,'海豹'),(17,'北極熊'),(18,'疣豬'),(19,'狐獴'),(20,'獅子');
 /*!40000 ALTER TABLE `animals` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-02 11:35:55
+-- Dump completed on 2019-09-23  1:42:02

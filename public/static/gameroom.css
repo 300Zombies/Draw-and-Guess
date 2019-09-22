@@ -161,8 +161,8 @@ main {
     content: "WAITING";
 }
 
-.skipped-h1::before {
-    content: "SKIPPED";
+.skipped-h1::after {
+    content: " SKIPPED THE TURN";
 }
 
 .master-h1::before {
@@ -170,7 +170,7 @@ main {
 }
 
 .answer-h1::before {
-    content: "ANSWER";
+    content: "ANSWER: ";
 }
 
 .winner-h1::before {
