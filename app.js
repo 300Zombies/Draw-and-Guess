@@ -99,7 +99,7 @@ io.on("connection", (socket) => {
             let i = game.players.findIndex((e) => { // e === elements
                 return e.id === socket.id
             });
-            game.players[i].score += 100;
+            game.players[i].score += 35;
             socket.emit("you hit");
             io.emit("update score", game.players);
             msg = `${player.name}: HIT THE ANSWER!!`;
@@ -298,7 +298,7 @@ io.on("connection", (socket) => {
         console.log(theTopic);
         game.topic = theTopic;
         // clearInterval(game.interval);
-        let expired = Date.now() + (20 * 1000);
+        let expired = Date.now() + (30 * 1000);
         // send to drawer enable drawing and countdown
         socket.emit("start drawing", expired);
         // send to others enable msg and start countdown
@@ -340,7 +340,7 @@ io.on("connection", (socket) => {
     });
     socket.on("draw 60 sec", () => {
         // start drawing countdown
-        game.countdown(20 * 1000, () => {
+        game.countdown(30 * 1000, () => {
             // console.log("drawing over timer 60s")
             let i = game.players.findIndex((e) => {
                 return e.drawing === true;

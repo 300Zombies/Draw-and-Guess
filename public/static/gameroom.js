@@ -220,7 +220,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
 
         headline.className = "";
         headline.classList.add("wait-h1");
-        headling.textContent = "";
+        headline.textContent = "";
         info.classList.remove("deactivated");
         nextOne.classList.remove("deactivated");
         // nextOne.textContent = `player is next`;
