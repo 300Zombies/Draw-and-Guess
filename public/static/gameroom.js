@@ -200,7 +200,8 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     // *** timer event ***
     socket.on("frontend timer", (expired) => {
         // everyone gets the countdown
-        let sec = (expired - Date.now()) / 1000;
+        // let sec = (expired - Date.now()) / 1000;
+        let sec = ((expired - Date.now()) / 1000) + 3;
         timerBox.removeChild(countdown);
         timerBox.appendChild(countdown);
         countdown.style.animation = `timebar ${sec}s linear`;
