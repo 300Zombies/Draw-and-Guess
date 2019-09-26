@@ -3,7 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Chilanka", cursive, sans-serif;
+    font-family: "Noto Sans TC", "Roboto", sans-serif;
     /* disable mouse drag & select */
     -webkit-touch-callout: none;
     /* iOS Safari */
@@ -25,85 +25,108 @@ ul {
     list-style: none;
 }
 
+body {
+    background: #060c21;
+}
+
 section {
+    width: 100vw;
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: #052e63;
+
+}
+
+.content-wrap {
+    width: 100%;
+    max-width: 1000px;
+    background: transparent;
+    /* border: 1px solid #fff; */
 }
 
 /* header */
-header {
+/* header {
     width: 1080px;
+    width: 100%;
     height: 45px;
     background: #eee;
-}
+} */
 
 /* main */
 main {
-    width: 1080px;
+    /* width: 1080px; */
+    width: 100%;
     height: 680px;
     background: #fff;
     display: flex;
 }
 
 .left {
-    width: 25%;
+    width: calc(25% - 16px);
     height: 100%;
-    background: #ddd;
-    /* display: flex;
-    flex-direction: column; */
+    margin: 8px 8px 8px 8px;
+    background: transparent;
 }
 
 .card {
-    border: 1px solid black;
+    position: relative;
+    /* border: 1px solid #fff; */
     width: 100%;
     /* 85*8 = total 680px */
     height: 85px;
+    background: #060c21;
+    margin: 0 0 12px 0;
     display: flex;
+    color: #fff;
 }
 
 .role {
-    width: 40px;
-    background: #eee;
+    /* width: 30px; */
+    min-width: 30px;
+    /* background: #eee; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .pic {
-    width: 85px;
-    background: #ccc;
+    /* width: 85px; */
+    min-width: 85px;
+    /* border: 1px solid #fff; */
+    /* background: #ccc; */
 }
 
 .status {
-    width: 145px;
+    width: 60%;
+    max-width: 60%;
     display: flex;
     flex-direction: column;
-    background: #eee;
 }
 
 .name {
     width: 100%;
-    height: 30px;
-    background: #fff;
+    height: 50%;
+    padding: 0 8px;
+    /* border: 1px solid #fff; */
+    display: flex;
+    align-items: center;
 }
 
 .score {
     width: 100%;
-    height: 30px;
-    background: #eee;
-}
-
-.next {
-    width: 100%;
-    height: 25px;
-    background: #fff;
+    height: 50%;
+    padding: 0 8px;
+    /* border: 1px solid #fff; */
+    display: flex;
+    align-items: center;
 }
 
 .right {
     width: 75%;
     height: 100%;
-    background: #fff;
+    background: transparent;
     display: flex;
     flex-direction: column;
 }
@@ -111,9 +134,12 @@ main {
 .frame {
     position: relative;
     /* this breaks cursor/canvas offset setting */
-    width: 100%;
-    height: 70%;
-    background: #bbb;
+    width: calc(100% - 16px);
+    height: calc(70% - 16px);
+    margin: 8px 8px 8px 8px;
+    /* border: 1px solid #fff; */
+    background: #060c21;
+    /* background: #eee; */
 }
 
 .barrier {
@@ -133,9 +159,9 @@ main {
     height: 60%;
     left: 15%;
     top: 20%;
-    border: 1px solid black;
+    border: 1px solid #fff;
+    color: #fff;
     border-radius: 12px;
-    background: #fff;
     z-index: 2;
 }
 
@@ -192,7 +218,7 @@ main {
     top: 35%;
     width: 25%;
     height: 30%;
-    border: 1px solid #000;
+    border: 1px solid #fff;
     border-radius: 12px;
     text-align: center;
     padding-top: 5px;
@@ -203,10 +229,15 @@ main {
     top: 35%;
     width: 25%;
     height: 30%;
-    border: 1px solid #000;
+    border: 1px solid #fff;
     border-radius: 12px;
     text-align: center;
     padding-top: 5px;
+}
+
+.info-btn,
+.select-btn {
+    cursor: pointer;
 }
 
 .next-one {
@@ -249,17 +280,17 @@ main {
     left: 5%;
     width: 90%;
     height: 2.5%;
-    background: #fff;
     border-radius: 6px;
     z-index: 1;
 }
 
 .countdown {
-    position: absolute;
     width: 100%;
     height: 100%;
-    background: #999;
     border-radius: 6px;
+    display: flex;
+    justify-content: flex-end;
+    background: #fff;
 }
 
 /* timerbar animation */
@@ -279,32 +310,163 @@ main {
 }
 
 .chat {
-    width: 100%;
-    height: 30%;
-    background: #fff;
+    position: relative;
+    width: calc(100% - 16px);
+    height: calc(30% - 16px);
+    margin: 8px 8px 8px 8px;
+    background: #060c21;
+    color: #fff;
+    /* border: 1px solid #fff; */
 }
 
 #messages {
     width: 100%;
     height: 85%;
-    background: #eee;
+    /* border: 1px solid #fff; */
+    padding: 8px;
     overflow: auto;
+}
+
+#m {
+    padding: 0 8px;
+}
+
+form {
+    display: flex;
+    justify-content: space-between;
+}
+
+input:focus {
+    outline: none;
 }
 
 form input {
     width: 90%;
-    height: 15%;
+    height: 30px;
+    background: none;
+    border: 1px solid #fff;
+    color: #fff;
+    pointer-events: auto;
 }
 
 form button {
-    width: 9%;
+    width: 10%;
+    height: 30px;
+    background: none;
+    border: 1px solid #fff;
+    color: #fff;
+    pointer-events: auto;
     /* height: 15%; */
     /* border: none; */
 }
 
 /* footer */
 footer {
-    width: 1080px;
+    /* width: 1080px; */
+    width: 100%;
     height: 45px;
     background: #eee;
+}
+
+/* skewed border */
+.skewed-border-player::before {
+    content: "";
+    position: absolute;
+    top: -2.5px;
+    right: -2.5px;
+    bottom: -2.5px;
+    left: -2.5px;
+    transform: skew(5deg, 2deg);
+    z-index: -1;
+}
+
+.skewed-border-player::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    /* so you can point element behind */
+    pointer-events: none;
+}
+
+.skewed-border-player:nth-child(1)::before {
+    background: linear-gradient(315deg, #ff0057, #e64a19);
+}
+
+.skewed-border-player:nth-child(2)::before {
+    background: linear-gradient(315deg, #ff6600, #d4b400);
+}
+
+.skewed-border-player:nth-child(3)::before {
+    background: linear-gradient(315deg, #67ff20, #02ff63);
+}
+
+.skewed-border-player:nth-child(4)::before {
+    background: linear-gradient(315deg, #0077ff, #2c07ff);
+}
+
+.skewed-border-player:nth-child(5)::before {
+    background: linear-gradient(315deg, #6200ff, #d607ff);
+}
+
+.skewed-border-player:nth-child(6)::before {
+    background: linear-gradient(315deg, #ff13ff, #ff0766);
+}
+
+.skewed-border-player:nth-child(7)::before {
+    background: linear-gradient(315deg, #adff16, #11ffcb);
+}
+
+.skewed-border-frame::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    bottom: -4px;
+    left: -4px;
+    transform: skew(-1deg, -1deg);
+    z-index: -1;
+}
+
+.skewed-border-frame::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    /* so you can point element behind */
+    pointer-events: none;
+}
+
+.skewed-border-frame::before {
+    background: linear-gradient(45deg, #1eff00, #00fff2);
+}
+
+.skewed-border-chat::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    bottom: -2px;
+    left: -2px;
+    transform: skew(-1deg, -1deg);
+    z-index: -1;
+}
+
+.skewed-border-chat::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    /* so you can point element behind */
+    pointer-events: none;
+}
+
+.skewed-border-chat::before {
+    background: linear-gradient(45deg, #ffffff, #ffffff);
 }

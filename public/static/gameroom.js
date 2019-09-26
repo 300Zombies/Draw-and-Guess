@@ -91,6 +91,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         players.forEach((e) => {
             let card = document.createElement("div");
             card.classList.add("card");
+            card.classList.add("skewed-border-player");
             let role = document.createElement("div");
             role.classList.add("role");
             let pic = document.createElement("div");
@@ -99,15 +100,15 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             status.classList.add("status");
             let playerName = document.createElement("div");
             playerName.classList.add("name");
-            playerName.textContent = e.name;
+            playerName.textContent = `Name : ${e.name}`;
             let score = document.createElement("div");
             score.classList.add("score");
-            score.textContent = `score: ${e.score}`;
-            let next = document.createElement("div");
-            next.classList.add("next");
+            score.textContent = `Score : ${e.score}`;
+            // let next = document.createElement("div");
+            // next.classList.add("next");
             status.appendChild(playerName);
             status.appendChild(score);
-            status.appendChild(next);
+            // status.appendChild(next);
             card.appendChild(role);
             card.appendChild(pic);
             card.appendChild(status);
@@ -132,15 +133,15 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             status.classList.add("status");
             let playerName = document.createElement("div");
             playerName.classList.add("name");
-            playerName.textContent = e.name;
+            playerName.textContent = `Name : ${e.name}`;
             let score = document.createElement("div");
             score.classList.add("score");
-            score.textContent = `score: ${e.score}`;
-            let next = document.createElement("div");
-            next.classList.add("next");
+            score.textContent = `Score : ${e.score}`;
+            // let next = document.createElement("div");
+            // next.classList.add("next");
             status.appendChild(playerName);
             status.appendChild(score);
-            status.appendChild(next);
+            // status.appendChild(next);
             card.appendChild(role);
             card.appendChild(pic);
             card.appendChild(status);
@@ -328,7 +329,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
 
 
     let current = {
-        color: "black",
+        color: "#fff",
     };
     let drawing = false;
 
