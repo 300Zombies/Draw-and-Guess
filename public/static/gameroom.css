@@ -134,9 +134,9 @@ main {
 .frame {
     position: relative;
     /* this breaks cursor/canvas offset setting */
-    width: calc(100% - 16px);
+    width: calc(100% - 24px);
     height: calc(70% - 16px);
-    margin: 8px 8px 8px 8px;
+    margin: 8px 8px 8px 16px;
     /* border: 1px solid #fff; */
     background: #060c21;
     /* background: #eee; */
@@ -281,6 +281,7 @@ main {
     width: 90%;
     height: 2.5%;
     border-radius: 6px;
+    box-shadow: inset 0 0 5px #fff;
     z-index: 1;
 }
 
@@ -290,7 +291,8 @@ main {
     border-radius: 6px;
     display: flex;
     justify-content: flex-end;
-    background: #fff;
+    background: linear-gradient(90deg, #34ff19, #15f7ff);
+    box-shadow: inset 0 0 5px #000;
 }
 
 /* timerbar animation */
@@ -305,15 +307,70 @@ main {
     }
 }
 
+.canvas-panel {
+    position: absolute;
+    width: 40px;
+    height: 400px;
+    border-radius: 12px;
+    color: #fff;
+    z-index: 2;
+}
+
+/* color section */
+.palette {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #fff;
+    margin: 3px 5px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.white {
+    background: #fff;
+}
+
+.grey {
+    background-color: #777;
+}
+
+.red {
+    background-color: #ff4848;
+}
+
+.orange {
+    background-color: #ff9f50;
+}
+
+.yellow {
+    background-color: #fffc50;
+}
+
+.green {
+    background-color: #5cff56;
+}
+
+.blue {
+    background-color: #00e1ff;
+}
+
+.purple {
+    background-color: #bc6aff;
+}
+
+
 .deactivated {
     display: none;
 }
 
 .chat {
     position: relative;
-    width: calc(100% - 16px);
+    width: calc(100% - 24px);
     height: calc(30% - 16px);
-    margin: 8px 8px 8px 8px;
+    margin: 8px 8px 8px 16px;
     background: #060c21;
     color: #fff;
     /* border: 1px solid #fff; */
@@ -329,6 +386,7 @@ main {
 
 #m {
     padding: 0 8px;
+    box-shadow: inset 0 0 5px #fff;
 }
 
 form {
@@ -344,7 +402,7 @@ form input {
     width: 90%;
     height: 30px;
     background: none;
-    border: 1px solid #fff;
+    /* border: 1px solid #fff; */
     color: #fff;
     pointer-events: auto;
 }
@@ -353,7 +411,8 @@ form button {
     width: 10%;
     height: 30px;
     background: none;
-    border: 1px solid #fff;
+    box-shadow: inset 0 0 5px #fff;
+    /* border: 1px solid #fff; */
     color: #fff;
     pointer-events: auto;
     /* height: 15%; */
@@ -442,7 +501,7 @@ footer {
 }
 
 .skewed-border-frame::before {
-    background: linear-gradient(45deg, #1eff00, #00fff2);
+    background: linear-gradient(45deg, #ff8800, #ff0000);
 }
 
 .skewed-border-chat::before {
@@ -468,5 +527,5 @@ footer {
 }
 
 .skewed-border-chat::before {
-    background: linear-gradient(45deg, #ffffff, #ffffff);
+    background: linear-gradient(45deg, #0b9bfc, #d9ff00);
 }

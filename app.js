@@ -5,6 +5,7 @@ const mysql = require("./util/mysqlcon.js");
 const server = app.listen(3000, () => {
     console.log("listening on port 3000");
 });
+const request = require("request");
 const io = require("socket.io").listen(server);
 
 app.use(express.static("public"));
@@ -70,6 +71,30 @@ class Player {
     }
 }
 let game = new Game();
+app.post("/login/facebook", (req, res) => {
+    const fbToken = req.body.token; // aquire fb token from req.body
+    const url = `https://graph.facebook.com/me?fields=id,name,picture.width(160).height(160)&access_token=${fbToken}`;
+    request(url, async (error, response, body) => { // request user info
+        if (!error && response.statusCode == 200) {
+            // this user has logged into fb, and is a verified user.
+            const fbName = JSON.parse(body).name;
+            const fbPicture = JSON.parse(body).picture.data.url;
+            console.log("name" + fbName, "pic" + fbPicture)
+            console.log("facebook signin success");
+            res.send({
+                name: fbName,
+                picture: fbPicture
+            });
+        } else {
+            console.log(error)
+        }
+    });
+});
+
+
+
+
+
 io.on("connection", (socket) => {
     console.log("a user connected");
     socket.on("join room", (name) => { // ok
@@ -134,6 +159,7 @@ io.on("connection", (socket) => {
                 let expired = Date.now() + (10 * 1000);
                 io.emit("frontend timer", expired);
                 io.emit("block canvas and chat");
+                io.emit("hide canvas panel");
                 io.emit("masterpiece", game.next);
                 game.guessed = 0;
                 return
@@ -154,6 +180,10 @@ io.on("connection", (socket) => {
         // update players and drawing status
         if (game.players[i].drawing === true) {
             // handle drawing person leave
+            // clear canvas
+            // show drawer leave
+            // assign next drawer
+            // let next drawer pick topic
             clearTimeout(game.timer);
             // clearInterval(game.interval);
             io.emit("drawer leaved");
@@ -301,6 +331,7 @@ io.on("connection", (socket) => {
         let expired = Date.now() + (30 * 1000);
         // send to drawer enable drawing and countdown
         socket.emit("start drawing", expired);
+        socket.emit("show canvas panel");
         // send to others enable msg and start countdown
         socket.broadcast.emit("start guessing", expired);
         io.emit("frontend timer", expired); // draw and guess
@@ -364,6 +395,7 @@ io.on("connection", (socket) => {
                 topic: game.topic
             });
             io.emit("block canvas and chat");
+            io.emit("hide canvas panel");
         });
     });
 });

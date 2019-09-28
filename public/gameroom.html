@@ -16,14 +16,20 @@
         <!-- <header></header> -->
         <main class="content-wrap">
             <div class="left">
-                <!-- <div class="card">
-                    <div class="role">0</div>
+                <div class="card skewed-border-player">
+                    <!-- <div class="role">0</div>
                     <div class="pic"></div>
                     <div class="status">
                         <div class="name">Name:</div>
                         <div class="score">Score:</div>
-                    </div>
-                </div> -->
+                    </div> -->
+                </div>
+                <div class="card skewed-border-player"></div>
+                <div class="card skewed-border-player"></div>
+                <div class="card skewed-border-player"></div>
+                <div class="card skewed-border-player"></div>
+                <div class="card skewed-border-player"></div>
+                <div class="card skewed-border-player"></div>
             </div>
             <div class="right">
                 <div class="frame skewed-border-frame">
@@ -49,12 +55,25 @@
                         <div class="countdown"></div>
                     </div>
                     <!-- timer -->
+                    <div class="canvas-panel deactivated">
+                        <!-- <div class="palette pen"><i class="fas fa-pen fa-lg"></i></div> -->
+                        <!-- <div class="palette eraser"><i class="fas fa-eraser fa-lg"></i></div> -->
+                        <div class="palette clear"><i class="far fa-sticky-note fa-lg"></i></div>
+                        <div class="palette color white"></div>
+                        <div class="palette color grey"></div>
+                        <div class="palette color red"></div>
+                        <div class="palette color orange"></div>
+                        <div class="palette color yellow"></div>
+                        <div class="palette color green"></div>
+                        <div class="palette color blue"></div>
+                        <div class="palette color purple"></div>
+                    </div>
                     <canvas class="whiteboard"></canvas>
                 </div>
                 <div class="chat skewed-border-chat">
                     <div id="messages"></div>
                     <form action="">
-                        <input id="m" type="text" autocomplete="off" placeholder="make a guess..." disabled>
+                        <input id="m" type="text" autocomplete="off" placeholder="[tab] make a guess..." disabled>
                         <button class="send" disabled>Send</button>
                     </form>
                 </div>

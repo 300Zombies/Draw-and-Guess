@@ -1,14 +1,7 @@
 // "use strict";
 window.addEventListener("load", () => { // change jQuery back to vanilla JavaScript
-    // test area
     const countdown = document.querySelector(".countdown");
-    // countdown.addEventListener("click", () => {
-    //     countdown.classList.toggle("counting-down");
-    // });
     const timerBox = document.querySelector(".timer-box");
-    // timer.addEventListener("click", () => {
-    //     countdown.classList.remove("counting-down");
-    // }, true);
     const info = document.querySelector(".info");
     const panel = document.querySelector(".info-panel");
     const headline = document.querySelector(".info-header h1")
@@ -21,10 +14,13 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     const nextOne = document.querySelector(".next-one");
     const barrier = document.querySelector(".barrier");
     const sendBtn = document.querySelector(".send");
-    // TODO: game start btn
+    const cards = document.querySelectorAll(".card");
+
     // canvas
     const canvas = document.querySelector(".whiteboard");
-    // const colors = document.querySelector(".color");
+    const colors = document.querySelectorAll(".color");
+    const clearAll = document.querySelector(".clear");
+    const canvasPanel = document.querySelector(".canvas-panel");
     const ctx = canvas.getContext("2d");
     const frame = document.querySelector(".frame");
     // console.log("this is context.canvas", ctx.canvas);
@@ -53,12 +49,12 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             socket.emit("draw 60 sec"); // timer
         });
     });
-    // test area
     const socket = io();
     // chat
     const form = document.querySelector("form");
     const m = document.querySelector("#m");
-    const name = (sessionStorage.getItem("name")).toString();
+    const name = (sessionStorage.getItem("nickname")).toString();
+    const picture = sessionStorage.getItem("portrait");
     const left = document.querySelector(".left");
     // sessionStorage.removeItem("name");
     socket.emit("join room", name);
@@ -85,35 +81,57 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         nextOne.classList.add("deactivated");
         // prepare drawer screen
         // render player list
-        left.innerHTML = "";
+        // left.innerHTML = "";
+        cards.forEach((e) => {
+            e.innerHTML = "";
+        });
         console.log(`${players[players.length-1].name} joined the game`);
         console.log("players", players);
-        players.forEach((e) => {
-            let card = document.createElement("div");
-            card.classList.add("card");
-            card.classList.add("skewed-border-player");
+        // players.forEach((e) => {
+        //     // let card = document.createElement("div");
+        //     // card.classList.add("card");
+        //     // card.classList.add("skewed-border-player");
+        //     // 
+        //     let role = document.createElement("div");
+        //     role.classList.add("role");
+        //     let pic = document.createElement("div");
+        //     pic.classList.add("pic");
+        //     let status = document.createElement("div");
+        //     status.classList.add("status");
+        //     let playerName = document.createElement("div");
+        //     playerName.classList.add("name");
+        //     playerName.textContent = `id: ${e.name}`;
+        //     let score = document.createElement("div");
+        //     score.classList.add("score");
+        //     score.textContent = `pts: ${e.score}`;
+        //     status.appendChild(playerName);
+        //     status.appendChild(score);
+        //     // card.appendChild(role);
+        //     // card.appendChild(pic);
+        //     // card.appendChild(status);
+        //     // left.appendChild(card);
+        // });
+        for (let i = 0; i < players.length; i++) {
             let role = document.createElement("div");
             role.classList.add("role");
             let pic = document.createElement("div");
             pic.classList.add("pic");
+            pic.style.backgroundSize = "cover";
+            pic.style.backgroundImage = picture;
             let status = document.createElement("div");
             status.classList.add("status");
             let playerName = document.createElement("div");
             playerName.classList.add("name");
-            playerName.textContent = `Name : ${e.name}`;
+            playerName.textContent = `id: ${players[i].name}`;
             let score = document.createElement("div");
             score.classList.add("score");
-            score.textContent = `Score : ${e.score}`;
-            // let next = document.createElement("div");
-            // next.classList.add("next");
+            score.textContent = `pts: ${players[i].score}`;
             status.appendChild(playerName);
             status.appendChild(score);
-            // status.appendChild(next);
-            card.appendChild(role);
-            card.appendChild(pic);
-            card.appendChild(status);
-            left.appendChild(card);
-        });
+            cards[i].appendChild(role);
+            cards[i].appendChild(pic);
+            cards[i].appendChild(status);
+        }
         // if game in progress TODO:
         if (gameStatus.on) {
             // do canvas init
@@ -121,32 +139,58 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         }
     });
     socket.on("update score", (players) => {
-        left.innerHTML = "";
-        players.forEach((e) => {
-            let card = document.createElement("div");
-            card.classList.add("card");
+        // left.innerHTML = "";
+        cards.forEach((e) => {
+            e.innerHTML = "";
+        });
+        // players.forEach((e) => {
+        //     // let card = document.createElement("div");
+        //     // card.classList.add("card");
+        //     // card.classList.add("skewed-border-player");
+        //     // 
+        //     let role = document.createElement("div");
+        //     role.classList.add("role");
+        //     let pic = document.createElement("div");
+        //     pic.classList.add("pic");
+        //     let status = document.createElement("div");
+        //     status.classList.add("status");
+        //     let playerName = document.createElement("div");
+        //     playerName.classList.add("name");
+        //     playerName.textContent = `id: ${e.name}`;
+        //     let score = document.createElement("div");
+        //     score.classList.add("score");
+        //     score.textContent = `pts: ${e.score}`;
+        //     // let next = document.createElement("div");
+        //     // next.classList.add("next");
+        //     status.appendChild(playerName);
+        //     status.appendChild(score);
+        //     // status.appendChild(next);
+        //     card.appendChild(role);
+        //     card.appendChild(pic);
+        //     card.appendChild(status);
+        //     // left.appendChild(card);
+        // });
+        for (let i = 0; i < players.length; i++) {
             let role = document.createElement("div");
             role.classList.add("role");
             let pic = document.createElement("div");
             pic.classList.add("pic");
+            pic.style.backgroundSize = "cover";
+            pic.style.backgroundImage = picture;
             let status = document.createElement("div");
             status.classList.add("status");
             let playerName = document.createElement("div");
             playerName.classList.add("name");
-            playerName.textContent = `Name : ${e.name}`;
+            playerName.textContent = `id: ${players[i].name}`;
             let score = document.createElement("div");
             score.classList.add("score");
-            score.textContent = `Score : ${e.score}`;
-            // let next = document.createElement("div");
-            // next.classList.add("next");
+            score.textContent = `pts: ${players[i].score}`;
             status.appendChild(playerName);
             status.appendChild(score);
-            // status.appendChild(next);
-            card.appendChild(role);
-            card.appendChild(pic);
-            card.appendChild(status);
-            left.appendChild(card);
-        });
+            cards[i].appendChild(role);
+            cards[i].appendChild(pic);
+            cards[i].appendChild(status);
+        }
     });
     form.onsubmit = (e) => {
         e.preventDefault();
@@ -208,12 +252,12 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         countdown.style.animation = `timebar ${sec}s linear`;
         console.log(`frontend countdown ${sec}s`);
     });
-    socket.on("drawer leaved", () => {
-        // reset countdown width
-        // countdown.style.transitionDuration = "";
-        // countdown.style.width = "100%";
-        // resetTimeBar();
-    });
+    // socket.on("drawer leaved", () => {
+    // reset countdown width
+    // countdown.style.transitionDuration = "";
+    // countdown.style.width = "100%";
+    // resetTimeBar();
+    // });
     socket.on("round end", () => {
         // drawer recieved round end
         socket.emit("round start");
@@ -256,6 +300,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     });
     socket.on("start drawing", () => {
         // control drawer frontend element
+        current.color = "#fff";
         countdown.classList.add("running");
         console.log("im drawing!");
         // disable canvas barrier and info
@@ -269,6 +314,12 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         });
         // countdown moved to timer event
     });
+    socket.on("show canvas panel", () => {
+        canvasPanel.classList.remove("deactivated");
+    });
+    socket.on("hide canvas panel", () => {
+        canvasPanel.classList.add("deactivated");
+    })
     socket.on("you hit", () => {
         // disable chat
         console.log("you hit");
@@ -332,6 +383,15 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         color: "#fff",
     };
     let drawing = false;
+    // color palette
+    colors.forEach((e) => {
+        e.addEventListener("click", () => {
+            current.color = window.getComputedStyle(e).getPropertyValue("background-color");
+        });
+    });
+    clearAll.addEventListener("click", () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
 
     canvas.addEventListener("mousedown", onMouseDown, false);
     canvas.addEventListener("mouseup", onMouseUp, false);
