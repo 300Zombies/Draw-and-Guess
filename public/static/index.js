@@ -1,6 +1,8 @@
 const play = document.querySelector("#play");
 play.addEventListener("click", (e) => {
     e.preventDefault();
+    portrait.style.backgroundImage = `url("${result.picture}")`;
+    nickname.value = result.name;
     sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));
     sessionStorage.setItem("nickname", nickname.value);
     window.location.href = "/gameroom.html";
