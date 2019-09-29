@@ -62,7 +62,7 @@ class Game {
 }
 // player object
 class Player {
-    constructor(name, id) {
+    constructor(name, picture, id) {
         this.name = name;
         this.id = id;
         this.score = 0;
@@ -97,9 +97,9 @@ app.post("/login/facebook", (req, res) => {
 
 io.on("connection", (socket) => {
     console.log("a user connected");
-    socket.on("join room", (name) => { // ok
+    socket.on("join room", (player) => { // ok
         // check if name duplicated
-        game.players.push(new Player(name, socket.id));
+        game.players.push(new Player(player.name, player.picture, socket.id));
 
         // drawer assignment should be in start game event
         if (game.players.length === 1) {

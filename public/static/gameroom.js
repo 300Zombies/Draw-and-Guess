@@ -57,7 +57,11 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     const picture = sessionStorage.getItem("portrait");
     const left = document.querySelector(".left");
     // sessionStorage.removeItem("name");
-    socket.emit("join room", name);
+    let playerData = {
+        name: name,
+        picture: picture,
+    }
+    socket.emit("join room", playerData);
     socket.on("render player", (gameStatus) => {
         console.log("My socket.id =", socket.id);
         let players = gameStatus.players;
@@ -117,7 +121,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             let pic = document.createElement("div");
             pic.classList.add("pic");
             pic.style.backgroundSize = "cover";
-            pic.style.backgroundImage = picture;
+            pic.style.backgroundImage = players[i].picture;
             let status = document.createElement("div");
             status.classList.add("status");
             let playerName = document.createElement("div");
