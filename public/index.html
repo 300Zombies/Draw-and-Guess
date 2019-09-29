@@ -25,6 +25,11 @@
             nickname.value = "";
         });
 
+        function setName() {
+            portrait.style.backgroundImage = `url("${fbPicture}")`;
+            nickname.value = fbName;
+        }
+
         function statusChangeCallback(response) { // Called with the results from FB.getLoginStatus().
             console.log('statusChangeCallback');
             console.log(response); // The current login status of the person.
@@ -136,7 +141,8 @@
                     </div>
                     <div class="login glowing-border">
                         <p>登入:</p>
-                        <fb:login-button size="large" scope="public_profile,email" onlogin="checkLoginState();">
+                        <fb:login-button size="large" scope="public_profile,email" onlogin="checkLoginState();"
+                            onclick="setName();">
                             超級臉書登入
                         </fb:login-button>
                     </div>
