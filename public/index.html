@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <script>
+    <!-- <script>
         let portrait;
         let nickname;
         // let fbPicture;
@@ -50,7 +50,142 @@
                         nickname.value = result.name;
                         // fbPicture = `url("${result.picture}")`;
                         // fbName = result.name;
+                    });
+                testAPI();
+            } else { // Not logged into your webpage or we are unable to tell.
+                // document.getElementById('status').innerHTML = 'Please log ' +
+                //     'into this webpage.';
+            }
+        }
+
+
+        function checkLoginState() { // Called when a person is finished with the Login Button.
+            FB.getLoginStatus(function (response) { // See the onlogin handler
+                statusChangeCallback(response);
+            });
+        }
+
+
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '796746667340492',
+                cookie: true, // Enable cookies to allow the server to access the session.
+                xfbml: true, // Parse social plugins on this webpage.
+                version: 'v4.0' // Use this Graph API version for this call.
+            });
+
+
+            FB.getLoginStatus(function (response) { // Called after the JS SDK has been initialized.
+                statusChangeCallback(response); // Returns the login status.
+            });
+        };
+
+
+        (function (d, s, id) { // Load the SDK asynchronously
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+
+        function testAPI() { // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me', function (response) {
+                console.log('Successful login for: ' + response.name);
+                // document.getElementById('status').innerHTML =
+                //     'Thanks for logging in, ' + response.name + '!';
+            });
+        }
+    </script> -->
+    <section>
+        <div class="content-wrap">
+            <header>
+                <div class="neon-wrap">
+                    <p>
+                        <i class="fas fa-palette"></i>
+                        你亂畫我亂猜
+                        <i class="fas fa-paint-brush"></i>
+                    </p>
+                    <span class="gradient-title"></span>
+                    <span class="dodge"></span>
+                </div>
+            </header>
+            <main>
+                <div class="main-content left-content glowing-border">
+                    <!-- <p>超級一起玩</p> -->
+                    <div class="portrait"></div>
+                    <form action="" method="post">
+                        <label for="">
+                            <input class="" type="text" id="nickname" name="nickname" autocomplete="off"
+                                placeholder="請輸入暱稱" required>
+                        </label>
+                        <div class="btns-wrap">
+                            <!-- <input class="btns" type="submit" value="超級開房間" disabled> -->
+                            <input class="btns" type="submit" id="play" value="超級開始玩">
+                        </div>
+                    </form>
+                </div>
+                <div class="main-content right-content">
+                    <div class="billboard glowing-border">
+                        <p>超級布告欄</p>
+                        <p>超級規則</p>
+                        <p>超級怎麼玩</p>
+                    </div>
+                    <div class="login glowing-border">
+                        <p>登入:</p>
+                        <fb:login-button size="large" scope="public_profile,email" onlogin="checkLoginState();">
+                            超級臉書登入
+                        </fb:login-button>
+                    </div>
+            </main>
+            <footer>
+                <p><i class="fas fa-lg fa-copyright"></i> 300Zombies.com</p>
+                <p><i class="fab fa-lg fa-github-square"></i> <i class="fab fa-lg fa-facebook-square"></i></p>
+            </footer>
+        </div>
+    </section>
+    <canvas id="myCanvas"></canvas>
+    <script>
+        let portrait;
+        let nickname;
+        // let fbPicture;
+        // let fbName;
+        // window.addEventListener("load", () => {
+        portrait = document.querySelector(".portrait");
+        nickname = document.querySelector("#nickname");
+        // portrait.style.backgroundImage = 'url("../img/thinkingface.png")';
+        // nickname.value = "";
+        // });
+
+        function statusChangeCallback(response) { // Called with the results from FB.getLoginStatus().
+            console.log('statusChangeCallback');
+            console.log(response); // The current login status of the person.
+            if (response.status === 'connected') { // Logged into your webpage and Facebook.
+                let token = response.authResponse.accessToken;
+                const options = {
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                    method: "POST",
+                    body: JSON.stringify({
+                        token: token
                     })
+                }
+                const endPoint = "/login/facebook"
+                // FETCH!!
+                fetch(endPoint, options)
+                    .then((res) => {
+                        return res.json()
+                    })
+                    .then((result) => {
+                        portrait.style.backgroundImage = `url("${result.picture}")`;
+                        nickname.value = result.name;
+                        // fbPicture = `url("${result.picture}")`;
+                        // fbName = result.name;
+                    });
                 testAPI();
             } else { // Not logged into your webpage or we are unable to tell.
                 // document.getElementById('status').innerHTML = 'Please log ' +
@@ -100,54 +235,6 @@
             });
         }
     </script>
-    <section>
-        <div class="content-wrap">
-            <header>
-                <div class="neon-wrap">
-                    <p>
-                        <i class="fas fa-palette"></i>
-                        你亂畫我亂猜
-                        <i class="fas fa-paint-brush"></i>
-                    </p>
-                    <span class="gradient-title"></span>
-                    <span class="dodge"></span>
-                </div>
-            </header>
-            <main>
-                <div class="main-content left-content glowing-border">
-                    <!-- <p>超級一起玩</p> -->
-                    <div class="portrait"></div>
-                    <form action="" method="post">
-                        <label for="">
-                            <input class="" type="text" id="nickname" name="nickname" autocomplete="off"
-                                placeholder="請輸入暱稱" required>
-                        </label>
-                        <div class="btns-wrap">
-                            <!-- <input class="btns" type="submit" value="超級開房間" disabled> -->
-                            <input class="btns" type="submit" id="play" value="超級開始玩">
-                        </div>
-                    </form>
-                </div>
-                <div class="main-content right-content">
-                    <div class="billboard glowing-border">
-                        <p>超級布告欄</p>
-                        <p>超級規則</p>
-                        <p>超級怎麼玩</p>
-                    </div>
-                    <div class="login glowing-border">
-                        <p>登入:</p>
-                        <fb:login-button size="large" scope="public_profile,email" onlogin="checkLoginState();">
-                            超級臉書登入
-                        </fb:login-button>
-                    </div>
-            </main>
-            <footer>
-                <p><i class="fas fa-lg fa-copyright"></i> 300Zombies.com</p>
-                <p><i class="fab fa-lg fa-github-square"></i> <i class="fab fa-lg fa-facebook-square"></i></p>
-            </footer>
-        </div>
-    </section>
-    <canvas id="myCanvas"></canvas>
     <script src="https://code.jquery.com/jquery-3.4.1.js"
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
     <script src="./static/index.js"></script>
