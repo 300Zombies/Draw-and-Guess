@@ -63,16 +63,16 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     }
     console.log(playerData)
     socket.emit("join room", playerData);
-    socket.on("render player", (gameStatus) => {
+    socket.on("render player", (players) => {
         console.log("My socket.id =", socket.id);
-        console.log("new player ", gameStatus)
-        let players = gameStatus.players;
+        // console.log("new player ", gameStatus)
+        // let players = gameStatus.players;
         // show everyone's socket.id when joined
         let i = players.findIndex((e) => { // e === elements
             return e.id === socket.id
         });
         // prepare drawer screen
-        if (i === 0) {
+        if (i === 0 && players.length < 2) {
             // something went wrong here
             // players[0] not always drawer
             console.log("I'm da host!")
@@ -139,13 +139,13 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             cards[i].appendChild(status);
         }
         // if game in progress TODO:
-        if (gameStatus.on) {
+        if (true) {
             // do canvas init
             socket.emit("canvas init", "newcomer requesting canvas data");
         }
     });
     socket.on("update score", (players) => {
-        // left.innerHTML = "";
+        // let players = gameStatus.players;
         cards.forEach((e) => {
             e.innerHTML = "";
         });
@@ -228,6 +228,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         selectR.textContent = topic[1];
     });
     socket.on("player skipped", (player) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         info.classList.remove("deactivated");
         headline.className = "";
         headline.classList.add("skipped-h1");
@@ -320,6 +321,9 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         });
         // countdown moved to timer event
     });
+    socket.on("clear canvas", () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
     socket.on("show canvas panel", () => {
         canvasPanel.classList.remove("deactivated");
     });
@@ -396,6 +400,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         });
     });
     clearAll.addEventListener("click", () => {
+        socket.emit("clear canvas");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
 

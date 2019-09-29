@@ -91,11 +91,6 @@ app.post("/login/facebook", (req, res) => {
         }
     });
 });
-
-
-
-
-
 io.on("connection", (socket) => {
     console.log("a user connected");
     socket.on("join room", (player) => { // ok
@@ -107,14 +102,13 @@ io.on("connection", (socket) => {
             // first player == default drawer
             game.players[0].drawing = true;
         }
-
         // pass latest players to frontend
-        let gameStatus = {
-            on: game.on,
-            now: game.now,
-            players: game.players
-        }
-        io.emit("render player", gameStatus);
+        // let gameStatus = {
+        //     on: game.on,
+        //     now: game.now,
+        //     players: game.players
+        // }
+        io.emit("render player", game.players);
     });
     socket.on("chat message", (player) => { // ok
         // check current player number every chat event
@@ -172,6 +166,10 @@ io.on("connection", (socket) => {
         io.emit("chat message", msg);
     });
     socket.on("disconnect", () => { // TODO: incomplete
+        if (game.players.length === 0) {
+            console.log(game.players)
+            game.on = false;
+        }
         // player disconnect while game started, especially drawing persion
         console.log("user disconnected");
         // let i = players.findIndex(e => e.id === socket.id);
@@ -180,29 +178,41 @@ io.on("connection", (socket) => {
         });
         // update players and drawing status
         if (game.players[i].drawing === true) {
-            // handle drawing person leave
+            // TODO:
             // clear canvas
             // show drawer leave
             // assign next drawer
             // let next drawer pick topic
+            game.last = game.players[i];
             clearTimeout(game.timer);
-            // clearInterval(game.interval);
-            io.emit("drawer leaved");
             if (i + 1 === game.players.length) {
                 game.players[0].drawing = true;
+                game.next = game.players[0];
+                io.to(game.players[0].id).emit("time up");
             } else {
                 game.players[i + 1].drawing = true;
+                game.next = game.players[i + 1];
+                io.to(game.players[i + 1].id).emit("time up");
             }
+            let expired = Date.now() + (10 * 1000);
+            io.emit("frontend timer", expired);
+            io.emit("block canvas and chat");
+            io.emit("hide canvas panel");
+            // io.emit("masterpiece", game.next);
+            io.emit("player skipped", {
+                last: game.last,
+                next: game.next
+            });
         }
         game.players.splice(i, 1);
         // send to everyone
         console.log(game.players)
-        let gameStatus = {
-            on: game.on,
-            now: game.now,
-            players: game.players
-        }
-        io.emit("render player", gameStatus);
+        // let gameStatus = {
+        //     on: game.on,
+        //     now: game.now,
+        //     players: game.players
+        // }
+        io.emit("update score", game.players);
         // prevent error
     });
     // canvas sync
@@ -225,6 +235,9 @@ io.on("connection", (socket) => {
         // emit to all socket BUT event sender
         socket.broadcast.emit("drawing", data);
     });
+    socket.on("clear canvas", () => {
+        socket.broadcast.emit("clear canvas");
+    })
     socket.on("game start", async () => {
         // only host can init game start event
         // must have 2 up player to start
