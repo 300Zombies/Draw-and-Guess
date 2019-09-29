@@ -25,11 +25,6 @@
             nickname.value = "";
         });
 
-        function setName() {
-            portrait.style.backgroundImage = `url("${fbPicture}")`;
-            nickname.value = fbName;
-        }
-
         function statusChangeCallback(response) { // Called with the results from FB.getLoginStatus().
             console.log('statusChangeCallback');
             console.log(response); // The current login status of the person.
@@ -51,8 +46,8 @@
                         return res.json()
                     })
                     .then((result) => {
-                        // portrait.style.backgroundImage = `url("${result.picture}")`;
-                        // nickname.value = result.name;
+                        portrait.style.backgroundImage = `url("${result.picture}")`;
+                        nickname.value = result.name;
                         fbPicture = `url("${result.picture}")`;
                         fbName = result.name;
                     })
@@ -141,8 +136,7 @@
                     </div>
                     <div class="login glowing-border">
                         <p>登入:</p>
-                        <fb:login-button size="large" scope="public_profile,email" onlogin="checkLoginState();"
-                            onclick="setName();">
+                        <fb:login-button size="large" scope="public_profile,email" onlogin="checkLoginState();">
                             超級臉書登入
                         </fb:login-button>
                     </div>
