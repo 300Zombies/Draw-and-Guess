@@ -16,13 +16,13 @@
     <script>
         let portrait;
         let nickname;
-        let fbPicture;
-        let fbName;
+        // let fbPicture;
+        // let fbName;
         window.addEventListener("load", () => {
             portrait = document.querySelector(".portrait");
             nickname = document.querySelector("#nickname");
-            portrait.style.backgroundImage = 'url("../img/thinkingface.png")';
-            nickname.value = "";
+            // portrait.style.backgroundImage = 'url("../img/thinkingface.png")';
+            // nickname.value = "";
         });
 
         function statusChangeCallback(response) { // Called with the results from FB.getLoginStatus().
@@ -48,8 +48,8 @@
                     .then((result) => {
                         portrait.style.backgroundImage = `url("${result.picture}")`;
                         nickname.value = result.name;
-                        fbPicture = `url("${result.picture}")`;
-                        fbName = result.name;
+                        // fbPicture = `url("${result.picture}")`;
+                        // fbName = result.name;
                     })
                 testAPI();
             } else { // Not logged into your webpage or we are unable to tell.
