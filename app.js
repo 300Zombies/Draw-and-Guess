@@ -68,6 +68,7 @@ class Player {
         this.score = 0;
         this.drawing = false;
         this.haveDrawn = false;
+        this.picture = picture;
     }
 }
 let game = new Game();

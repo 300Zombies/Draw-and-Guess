@@ -61,9 +61,11 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         name: name,
         picture: picture,
     }
+    console.log(playerData)
     socket.emit("join room", playerData);
     socket.on("render player", (gameStatus) => {
         console.log("My socket.id =", socket.id);
+        console.log("new player ", gameStatus)
         let players = gameStatus.players;
         // show everyone's socket.id when joined
         let i = players.findIndex((e) => { // e === elements
@@ -180,7 +182,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             let pic = document.createElement("div");
             pic.classList.add("pic");
             pic.style.backgroundSize = "cover";
-            pic.style.backgroundImage = picture;
+            pic.style.backgroundImage = players[i].picture;
             let status = document.createElement("div");
             status.classList.add("status");
             let playerName = document.createElement("div");
