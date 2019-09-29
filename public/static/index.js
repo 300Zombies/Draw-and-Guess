@@ -121,7 +121,6 @@ function animatePoints() {
         context.strokeStyle = "rgb(" + Math.floor(255) + "," +
             Math.floor(200 - (255 * inc)) + "," +
             Math.floor(200 - (255 * dec)) + ")";
-
         // let distance = Point.distance(lastPoint, point);
         // let midpoint = Point.midPoint(lastPoint, point);
         // let angle = Point.angle(lastPoint, point);
