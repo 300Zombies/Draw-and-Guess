@@ -21,6 +21,8 @@
         window.addEventListener("load", () => {
             portrait = document.querySelector(".portrait");
             nickname = document.querySelector("#nickname");
+            portrait.style.backgroundImage = 'url("../img/thinkingface.png")';
+            nickname.value = "";
         });
 
         function statusChangeCallback(response) { // Called with the results from FB.getLoginStatus().
@@ -118,7 +120,7 @@
                     <form action="" method="post">
                         <label for="">
                             <input class="" type="text" id="nickname" name="nickname" autocomplete="off"
-                                placeholder="請輸入暱稱">
+                                placeholder="請輸入暱稱" required>
                         </label>
                         <div class="btns-wrap">
                             <!-- <input class="btns" type="submit" value="超級開房間" disabled> -->

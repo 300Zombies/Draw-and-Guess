@@ -196,7 +196,8 @@ main {
     height: 160px;
     border: 1px solid #fff;
     margin: 10px;
-    background-image: url("../img/thinkingface.png");
+    /* background-image: url("../img/thinkingface.png"); */
+    background-size: 100%;
 }
 
 form {

@@ -1,8 +1,14 @@
 const play = document.querySelector("#play");
 play.addEventListener("click", (e) => {
     e.preventDefault();
-    portrait.style.backgroundImage = `url("${result.picture}")`;
-    nickname.value = result.name;
+    if (nickname.value === "" || nickname.value === undefined) {
+        portrait.style.backgroundImage = `url("../img/anonymous-250.jpg")`;
+        nickname.value = "Anonymous"; // Anonymous
+    }
+    if (fbPicture && fbName) {
+        portrait.style.backgroundImage = `url("${fbPicture}")`;
+        nickname.value = fbName;
+    }
     sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));
     sessionStorage.setItem("nickname", nickname.value);
     window.location.href = "/gameroom.html";
