@@ -26,7 +26,7 @@ CREATE TABLE `animals` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +35,7 @@ CREATE TABLE `animals` (
 
 LOCK TABLES `animals` WRITE;
 /*!40000 ALTER TABLE `animals` DISABLE KEYS */;
-INSERT INTO `animals` VALUES (1,'蝙蝠'),(2,'老鼠'),(3,'刺蝟'),(4,'石虎'),(5,'食蟻獸'),(6,'穿山甲'),(7,'水豚'),(8,'狐狸'),(9,'水母'),(10,'烏賊'),(11,'貓頭鷹'),(12,'眼鏡蛇'),(13,'鴨嘴獸'),(14,'無尾熊'),(15,'河馬'),(16,'海豹'),(17,'北極熊'),(18,'疣豬'),(19,'狐獴'),(20,'獅子');
+INSERT INTO `animals` VALUES (1,'蝙蝠'),(2,'老鼠'),(3,'刺蝟'),(4,'石虎'),(5,'食蟻獸'),(6,'穿山甲'),(7,'水豚'),(8,'狐狸'),(9,'水母'),(10,'烏賊'),(11,'貓頭鷹'),(12,'眼鏡蛇'),(13,'鴨嘴獸'),(14,'無尾熊'),(15,'河馬'),(16,'海豹'),(17,'北極熊'),(18,'疣豬'),(19,'狐獴'),(20,'獅子'),(21,'袋鼠'),(22,'駱駝'),(23,'青蛙'),(24,'海鷗'),(25,'烏鴉'),(26,'羊駝'),(27,'彈塗魚'),(28,'招潮蟹'),(29,'海葵'),(30,'翻車魚'),(31,'河豚'),(32,'鯨魚'),(33,'鯊魚'),(34,'小丑魚'),(35,'鱷魚'),(36,'龍蝦'),(37,'魟魚'),(38,'青蛙'),(39,'燈籠魚'),(40,'台灣黑熊');
 /*!40000 ALTER TABLE `animals` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -48,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-23  1:42:02
+-- Dump completed on 2019-09-30 20:16:06
