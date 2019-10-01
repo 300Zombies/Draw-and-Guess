@@ -1,18 +1,52 @@
+const roomStatus = document.querySelector("#room-status");
 const play = document.querySelector("#play");
-play.addEventListener("click", (e) => {
+play.addEventListener("click", async (e) => {
     e.preventDefault();
+    let gameStatus = await fetch("/knockknock", {
+            method: "GET"
+        })
+        .then((res) => {
+            return res.json();
+        })
+        .then((result) => {
+            return result
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+    if (gameStatus.haveSeats) {
+        roomStatus.textContent = `還有${gameStatus.seats}個位置`;
+        sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));
+        sessionStorage.setItem("nickname", nickname.value);
+        window.location.href = "/gameroom.html";
+    } else {
+        roomStatus.textContent = "沒有位置了";
+    }
     if (nickname.value === "" || nickname.value === undefined) {
         portrait.style.backgroundImage = `url("../img/anonymous-250.jpg")`;
         nickname.value = "Anonymous"; // Anonymous
     }
-    // if (fbPicture && fbName) {
-    //     portrait.style.backgroundImage = `url("${fbPicture}")`;
-    //     nickname.value = fbName;
-    // }
-    sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));
-    sessionStorage.setItem("nickname", nickname.value);
-    window.location.href = "/gameroom.html";
+    // sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));
+    // sessionStorage.setItem("nickname", nickname.value);
+    // window.location.href = "/gameroom.html";
 });
+fetch("/knockknock", {
+        method: "GET"
+    })
+    .then((res) => {
+        return res.json();
+    })
+    .then((result) => {
+        if (result.haveSeats) {
+            roomStatus.textContent = `還有${result.seats}個位置`;
+        } else {
+            roomStatus.textContent = "沒有位置了";
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+    });
+
 const LINE_DURATION = 2;
 const LINE_WIDTH_START = 5;
 

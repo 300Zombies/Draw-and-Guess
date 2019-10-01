@@ -82,7 +82,7 @@ app.post("/login/facebook", (req, res) => {
             const fbPicture = JSON.parse(body).picture.data.url;
             console.log("name" + fbName, "pic" + fbPicture)
             console.log("facebook signin success");
-            res.send({
+            res.json({
                 name: fbName,
                 picture: fbPicture
             });
@@ -90,6 +90,21 @@ app.post("/login/facebook", (req, res) => {
             console.log(error)
         }
     });
+});
+app.get("/knockknock", (req, res) => {
+    if (game.players.length < 6) {
+        res.send({
+            haveSeats: true,
+            seats: 7 - game.players.length,
+            message: "還有位置唷"
+        });
+    } else {
+        res.send({
+            haveSeats: false,
+            seats: 7 - game.players.length,
+            message: "沒有位置了"
+        });
+    }
 });
 io.on("connection", (socket) => {
     console.log("a user connected");

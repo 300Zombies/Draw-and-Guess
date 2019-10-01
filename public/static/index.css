@@ -192,6 +192,12 @@ input {
     transform: translate(1px, 1px);
 }
 
+#room-status {
+    display: flex;
+    justify-content: center;
+    /* border: 1px solid #ffffff; */
+}
+
 input:focus {
     outline: none;
 }
