@@ -176,31 +176,31 @@ main {
 }
 
 .start-h1::before {
-    content: "GAME START";
+    content: "遊戲開始";
 }
 
 .select-h1::before {
-    content: "SELECT";
+    content: "請選擇";
 }
 
 .wait-h1::before {
-    content: "WAITING";
+    content: "等待中";
 }
 
 .skipped-h1::after {
-    content: " SKIPPED THE TURN";
+    content: " 跳過這回合了";
 }
 
 .master-h1::before {
-    content: "MASTERPIECE";
+    content: "傑出的一手";
 }
 
 .answer-h1::before {
-    content: "ANSWER: ";
+    content: "答案是: ";
 }
 
 .winner-h1::before {
-    content: "WINNER";
+    content: "冠軍是 ";
 }
 
 .info-panel {
@@ -293,6 +293,7 @@ main {
     justify-content: flex-end;
     background: linear-gradient(90deg, #34ff19, #15f7ff);
     box-shadow: inset 0 0 5px #000;
+    transition: background-image 1s ease;
 }
 
 /* timerbar animation */

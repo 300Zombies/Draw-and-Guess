@@ -237,7 +237,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         panel.classList.add("deactivated");
         nextOne.classList.remove("deactivated");
         nextOne.textContent = "";
-        nextOne.textContent = `${player.next.name} is next`;
+        nextOne.textContent = `下一個是 ${player.next.name}`;
     });
     socket.on("time up", () => { // next drawer only
         // status === undefined if no value
@@ -342,7 +342,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         headline.classList.add("master-h1");
         info.classList.remove("deactivated");
         nextOne.classList.remove("deactivated");
-        nextOne.textContent = `${player.name} is next`;
+        nextOne.textContent = `下一個是 ${player.name}`;
         m.diabled = true;
         sendBtn.disable = true;
     });
@@ -354,7 +354,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         headline.textContent = data.topic;
         info.classList.remove("deactivated");
         nextOne.classList.remove("deactivated");
-        nextOne.textContent = `${data.next.name} is next`;
+        nextOne.textContent = `下一個是 ${data.next.name}`;
         // reset timeBar, start topic picking
         m.diabled = true;
         sendBtn.disable = true;
@@ -363,12 +363,12 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     socket.on("winner", (player) => { // TODO: pass variable
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         headline.textContent = "";
-        headline.textContent = ` ${player.winner.name}`;
+        headline.textContent = `${player.winner.name} !`;
         headline.className = "";
         headline.classList.add("winner-h1");
         info.classList.remove("deactivated");
         nextOne.classList.remove("deactivated");
-        nextOne.textContent = `${player.next.name} is next`;
+        nextOne.textContent = `下一個是 ${player.next.name}`;
         // reset timeBar, start topic picking
         m.diabled = true;
         sendBtn.disable = true;
