@@ -10,10 +10,10 @@ const io = require("socket.io").listen(server);
 
 app.use(express.static("public"));
 
-app.use(bodyParser.urlencoded({ // urlencoded is <form>'s default data type
+app.use(bodyParser.urlencoded({
     extended: false
 }));
-app.use(bodyParser.json()); // now body-parser can parse <form>'s json
+app.use(bodyParser.json());
 
 // io.on('connection', function(socket){
 //     socket.emit('request', /* */); // emit an event to the socket
@@ -118,19 +118,16 @@ io.on("connection", (socket) => {
         io.emit("render players re", game.players);
     });
     socket.on("chat message", (player) => { // ok
-        // check current player number every chat event
         let msg;
-        if (game.on && player.answer === game.topic) { // check if hit
-            // hit and calculate score
-            let i = game.players.findIndex((e) => { // e === elements
+        if (game.on && player.answer === game.topic) {
+            let i = game.players.findIndex((e) => {
                 return e.id === socket.id
             });
-            game.players[i].score += 35;
-            socket.emit("you hit");
-            io.emit("update score", game.players);
+            game.players[i].score += 17;
+            socket.emit("disable chat"); // player hit
+            io.emit("render players re", game.players);
             msg = `${player.name}猜對了!!`;
             game.guessed += 1;
-            // over 100 and masterpiece
             let result = game.players.filter((player) => {
                 return player.score >= 100;
             });
@@ -146,7 +143,6 @@ io.on("connection", (socket) => {
                     return e.drawing === true;
                 });
                 game.players[i].drawing = false;
-
                 if (i + 1 === game.players.length) {
                     game.players[0].drawing = true;
                     game.next = game.players[0];
@@ -174,7 +170,6 @@ io.on("connection", (socket) => {
             console.log(game.players)
             game.on = false;
         }
-        console.log("is game on?", game.on);
         // player disconnect while game started, especially drawing persion
         console.log("user disconnected");
         // let i = players.findIndex(e => e.id === socket.id);
@@ -183,8 +178,6 @@ io.on("connection", (socket) => {
         });
         // update players and drawing status
         if (game.players[i].drawing === true) {
-            // TODO:
-            // clear canvas
             // show drawer leave
             // assign next drawer
             // let next drawer pick topic
@@ -203,27 +196,17 @@ io.on("connection", (socket) => {
             io.emit("frontend timer", expired);
             io.emit("block canvas and chat");
             io.emit("hide canvas panel");
-            // io.emit("masterpiece", game.next);
             io.emit("player skipped", {
                 last: game.last,
                 next: game.next
             });
         }
         game.players.splice(i, 1);
-        // send to everyone
-        console.log(game.players)
-        // let gameStatus = {
-        //     on: game.on,
-        //     now: game.now,
-        //     players: game.players
-        // }
-        io.emit("update score", game.players);
-        // prevent error
+        console.log(game.players);
+        io.emit("render players re", game.players);
     });
-
-
     // canvas sync
-    socket.on("canvas init", (msg) => { // ok
+    socket.on("canvas init", (msg) => {
         console.log(msg)
         // find current drawer
         let i = game.players.findIndex((e) => {
@@ -234,16 +217,11 @@ io.on("connection", (socket) => {
         io.to(game.players[i].id).emit("canvas init", "server resquesting canvas data");
     });
 
-
-    //  TODO: under construction
-    socket.on("fresh canvas", (img) => {
+    socket.on("fresh canvas", (img) => { //  TODO: under construction
         console.log("socket.id request canvas", game.players[game.players.length - 1].id)
         // send to newcomer
         io.to(game.players[game.players.length - 1].id).emit("fresh canvas", img);
     });
-
-
-
     socket.on("drawing", (data) => {
         // emit to all socket BUT event sender
         socket.broadcast.emit("drawing", data);
@@ -252,69 +230,20 @@ io.on("connection", (socket) => {
         socket.broadcast.emit("clear canvas");
     })
     socket.on("game start", async () => {
-        // only host can init game start event
-        // must have 2 up player to start
-        // game object init
-        game.on = true;
-        game.guessed = 0;
-        game.topicPool = await mysql.con(`select title from animals`);
-        // map topicPool
-        game.topicPool = game.topicPool.map((e) => {
-            return e.title
-        });
-        game.shuffle(game.topicPool);
         console.log("let the games begin");
-        let session = {
-            topic: game.topicPair(game.topicPool),
-            expired: Date.now() + (10 * 1000)
+        if (game.topicPool.length <= 2) {
+            game.on = true;
+            game.guessed = 0;
+            game.topicPool = await mysql.con(`select title from animals`);
+            game.topicPool = game.topicPool.map((e) => {
+                return e.title
+            });
+            game.shuffle(game.topicPool);
         }
-        // emit topic pair to draw
-        socket.emit("pick one", session.topic);
-        // emit expired time to everyone
-        io.emit("frontend timer", session.expired); // picking topic
-    });
-    socket.on("round start", () => {
         let topic = game.topicPair(game.topicPool);
-        let expired = Date.now() + (10 * 1000)
-        // let result = game.players.filter((player) => {
-        //     return player.score >= 100;
-        // });
-        // // before round start check if there are 100+ points
-        // if (result.length > 0) { // one or more player over 100 points
-        //     let winner = result.reduce((prev, curr) => { // Ted
-        //         return prev.score > curr.score ? prev : curr
-        //     });
-        //     // assign new drawer
-        //     let i = game.players.findIndex((e) => {
-        //         return e.drawing === true;
-        //     });
-        //     game.players[i].drawing = false;
-
-        //     if (i + 1 === game.players.length) {
-        //         game.players[0].drawing = true;
-        //         // io.to(game.players[0].id).emit("time up");
-        //     } else {
-        //         game.players[i + 1].drawing = true;
-        //         // io.to(game.players[i + 1].id).emit("time up");
-        //     }
-        //     // tell all clients show winner screen
-        //     io.emit("winner", winner);
-        //     io.emit("frontend timer", expired); // for winner screen
-        //     // reset everyone's score to 0
-        //     game.players.forEach((e) => {
-        //         e.score = 0;
-        //     });
-        // } else { // no one over 100 points
-        //     console.log("round start");
-        //     // emit topic pair to drawer
-        //     socket.emit("pick one", topic);
-        //     // emit expired time to everyone
-        //     io.emit("frontend timer", expired); // picking topic
-        // }
-        console.log("round start");
-        // emit topic pair to drawer
+        let expired = Date.now() + (10 * 1000);
+        socket.emit("disable chat"); // to drawer
         socket.emit("pick one", topic);
-        // emit expired time to everyone
         io.emit("frontend timer", expired);
     });
     socket.on("pick 10 sec", () => {
@@ -345,8 +274,6 @@ io.on("connection", (socket) => {
                 next: game.next
             }); // tell frontend do display work
             io.emit("frontend timer", expired); // init frontend timer
-            // io.emit("update score", game.players);
-            // console.log("update player stat", game.players);
         });
     });
     socket.on("topic picked", (theTopic) => {
@@ -355,7 +282,7 @@ io.on("connection", (socket) => {
         console.log(theTopic);
         game.topic = theTopic;
         // clearInterval(game.interval);
-        let expired = Date.now() + (30 * 1000);
+        let expired = Date.now() + (60 * 1000);
         // send to drawer enable drawing and countdown
         socket.emit("start drawing", expired);
         socket.emit("show canvas panel");
@@ -376,29 +303,23 @@ io.on("connection", (socket) => {
                     next: game.next,
                     winner: game.winner
                 }); // fronrend display
-                io.emit("update score", game.players)
+                io.emit("render players re", game.players)
                 io.emit("frontend timer", expired);
                 socket.emit("time up");
             });
         } else {
             // after skipping screen, emit round end to drawer
             game.countdown(10 * 1000, () => {
-                // console.log("pick topic timer 10s")
                 // rebounce to backend timer pick 10 sec
                 socket.emit("round end");
                 // frontend display
                 socket.broadcast.emit("guess end");
             });
         }
-        // after skipping screen, emit round end to drawer
-        // game.countdown(10 * 1000, () => {
-        //     socket.emit("round end");
-        //     socket.broadcast.emit("guess end");
-        // });
     });
     socket.on("draw 60 sec", () => {
         // start drawing countdown
-        game.countdown(30 * 1000, () => {
+        game.countdown(60 * 1000, () => {
             // console.log("drawing over timer 60s")
             let i = game.players.findIndex((e) => {
                 return e.drawing === true;
@@ -432,42 +353,6 @@ function shuffle(arr) {
         let j = Math.floor(Math.random() * (i + 1));
         [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-}
-// discarded
-function assignDrawer(players) { // run twice to get 2 drawer for now/next
-    // build array with players haven't draw 
-    players.forEach((e) => {
-        if (e.haveDrawn === false) {
-            game.playerPool.push(e);
-        }
-    });
-    // randomly pick one become drawer
-    let i = Math.floor(Math.random() * game.playerPool.length);
-    game.playerPool[i].drawing = true;
-    // remove drawer to drawer array
-    let drawer = game.playerPool.splice(i, 1);
-    game.drawerPool.push(drawer);
-}
-// experiment
-function stepOne(timeout) {
-    console.log("step 1")
-    setTimeout(() => {
-        stepTwo(1000)
-    }, timeout);
-}
-
-function stepTwo(timeout) {
-    console.log("step 2")
-    setTimeout(() => {
-        stepThree(1000)
-    }, timeout);
-}
-
-function stepThree(timeout) {
-    console.log("step 3")
-    setTimeout(() => {
-        stepOne(1000)
-    }, timeout);
 }
 // countdownLoop(1000, countdownLoop)
 // testchat

@@ -61,7 +61,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         name: name,
         picture: picture
     });
-    socket.on("show game start", () => { // drawer only
+    socket.on("show game start", () => {
         info.classList.remove("deactivated");
         headline.className = "";
         headline.classList.add("start-h1");
@@ -73,95 +73,16 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         info.classList.remove("deactivated");
         headline.className = "";
         headline.classList.add("wait-h1");
-        // show usagi apng
+        // TODO: show apng
     });
-
-
-    // socket.on("render player", (players) => {
-    //     let i = players.findIndex((e) => { // e === elements
-    //         return e.id === socket.id
-    //     });
-    //     // prepare drawer screen
-    //     if (i === 0 && players.length < 2) {
-    //         // something went wrong here
-    //         // players[0] not always drawer
-    //         console.log("I'm da host!")
-    //         headline.className = "";
-    //         headline.classList.add("start-h1")
-    //         infoBtns.forEach((e) => {
-    //             e.classList.remove("deactivated")
-    //         });
-    //     } else {
-    //         console.log("I'm not da host!");
-    //     }
-    //     nextOne.classList.add("deactivated");
-
-    //     cards.forEach((e) => {
-    //         e.innerHTML = "";
-    //     });
-    //     for (let i = 0; i < players.length; i++) {
-    //         let role = document.createElement("div");
-    //         role.classList.add("role");
-    //         let pic = document.createElement("div");
-    //         pic.classList.add("pic");
-    //         pic.style.backgroundSize = "cover";
-    //         pic.style.backgroundImage = players[i].picture;
-    //         let status = document.createElement("div");
-    //         status.classList.add("status");
-    //         let playerName = document.createElement("div");
-    //         playerName.classList.add("name");
-    //         playerName.textContent = `id: ${players[i].name}`;
-    //         let score = document.createElement("div");
-    //         score.classList.add("score");
-    //         score.textContent = `pts: ${players[i].score}`;
-    //         status.appendChild(playerName);
-    //         status.appendChild(score);
-    //         cards[i].appendChild(role);
-    //         cards[i].appendChild(pic);
-    //         cards[i].appendChild(status);
-    //     }
-    //     // if game in progress TODO:
-    //     if (true) {
-    //         // do canvas init
-    //         socket.emit("canvas init", "newcomer requesting canvas data");
-    //     }
-    // });
-
+    // synchronize canvas on connection
     socket.emit("canvas init", "newcomer requesting canvas data");
 
     socket.on("synchronize canvas re", () => {
         // get current drawer canvas
     });
-    socket.on("render players re", (players) => {
-        // TODO: refactor update players and pts
-        cards.forEach((e) => {
-            e.innerHTML = "";
-        });
-        for (let i = 0; i < players.length; i++) {
-            let role = document.createElement("div");
-            role.classList.add("role");
-            let pic = document.createElement("div");
-            pic.classList.add("pic");
-            pic.style.backgroundSize = "cover";
-            pic.style.backgroundImage = players[i].picture;
-            let status = document.createElement("div");
-            status.classList.add("status");
-            let playerName = document.createElement("div");
-            playerName.classList.add("name");
-            playerName.textContent = `id: ${players[i].name}`;
-            let score = document.createElement("div");
-            score.classList.add("score");
-            score.textContent = `pts: ${players[i].score}`;
-            status.appendChild(playerName);
-            status.appendChild(score);
-            cards[i].appendChild(role);
-            cards[i].appendChild(pic);
-            cards[i].appendChild(status);
-        }
-    });
 
-    socket.on("update score", (players) => {
-        // let players = gameStatus.players;
+    socket.on("render players re", (players) => {
         cards.forEach((e) => {
             e.innerHTML = "";
         });
@@ -247,15 +168,10 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         countdown.style.animation = `timebar ${sec}s linear`;
         console.log(`frontend countdown ${sec}s`);
     });
-    // socket.on("drawer leaved", () => {
-    // reset countdown width
-    // countdown.style.transitionDuration = "";
-    // countdown.style.width = "100%";
-    // resetTimeBar();
-    // });
     socket.on("round end", () => {
         // drawer recieved round end
-        socket.emit("round start");
+        // socket.emit("round start");
+        socket.emit("game start");
         socket.emit("pick 10 sec");
         // show wait title
 
@@ -318,9 +234,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     socket.on("hide canvas panel", () => {
         canvasPanel.classList.add("deactivated");
     })
-    socket.on("you hit", () => {
-        // disable chat
-        console.log("you hit");
+    socket.on("disable chat", () => {
         m.disabled = true;
         sendBtn.disabled = true;
     });
