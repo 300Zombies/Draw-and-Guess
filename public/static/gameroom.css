@@ -176,7 +176,7 @@ main {
 }
 
 .start-h1::before {
-    content: "遊戲開始";
+    content: "你畫我猜";
 }
 
 .select-h1::before {

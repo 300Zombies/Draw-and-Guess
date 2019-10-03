@@ -55,68 +55,88 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     const m = document.querySelector("#m");
     const name = (sessionStorage.getItem("nickname")).toString();
     const picture = sessionStorage.getItem("portrait");
-    const left = document.querySelector(".left");
+    // const left = document.querySelector(".left");
     // sessionStorage.removeItem("name");
-    let playerData = {
+    socket.emit("join room", {
         name: name,
-        picture: picture,
-    }
-    console.log(playerData)
-    socket.emit("join room", playerData);
-    socket.on("render player", (players) => {
-        console.log("My socket.id =", socket.id);
-        // console.log("new player ", gameStatus)
-        // let players = gameStatus.players;
-        // show everyone's socket.id when joined
-        let i = players.findIndex((e) => { // e === elements
-            return e.id === socket.id
+        picture: picture
+    });
+    socket.on("show game start", () => { // drawer only
+        info.classList.remove("deactivated");
+        headline.className = "";
+        headline.classList.add("start-h1");
+        infoBtns.forEach((e) => {
+            e.classList.remove("deactivated")
         });
-        // prepare drawer screen
-        if (i === 0 && players.length < 2) {
-            // something went wrong here
-            // players[0] not always drawer
-            console.log("I'm da host!")
-            headline.className = "";
-            headline.classList.add("start-h1")
-            infoBtns.forEach((e) => {
-                e.classList.remove("deactivated")
-            });
-        } else {
-            console.log("I'm not da host!");
-        }
-        nextOne.classList.add("deactivated");
-        // prepare drawer screen
-        // render player list
-        // left.innerHTML = "";
+    });
+    socket.on("show wait for start", () => {
+        info.classList.remove("deactivated");
+        headline.className = "";
+        headline.classList.add("wait-h1");
+        // show usagi apng
+    });
+
+
+    // socket.on("render player", (players) => {
+    //     let i = players.findIndex((e) => { // e === elements
+    //         return e.id === socket.id
+    //     });
+    //     // prepare drawer screen
+    //     if (i === 0 && players.length < 2) {
+    //         // something went wrong here
+    //         // players[0] not always drawer
+    //         console.log("I'm da host!")
+    //         headline.className = "";
+    //         headline.classList.add("start-h1")
+    //         infoBtns.forEach((e) => {
+    //             e.classList.remove("deactivated")
+    //         });
+    //     } else {
+    //         console.log("I'm not da host!");
+    //     }
+    //     nextOne.classList.add("deactivated");
+
+    //     cards.forEach((e) => {
+    //         e.innerHTML = "";
+    //     });
+    //     for (let i = 0; i < players.length; i++) {
+    //         let role = document.createElement("div");
+    //         role.classList.add("role");
+    //         let pic = document.createElement("div");
+    //         pic.classList.add("pic");
+    //         pic.style.backgroundSize = "cover";
+    //         pic.style.backgroundImage = players[i].picture;
+    //         let status = document.createElement("div");
+    //         status.classList.add("status");
+    //         let playerName = document.createElement("div");
+    //         playerName.classList.add("name");
+    //         playerName.textContent = `id: ${players[i].name}`;
+    //         let score = document.createElement("div");
+    //         score.classList.add("score");
+    //         score.textContent = `pts: ${players[i].score}`;
+    //         status.appendChild(playerName);
+    //         status.appendChild(score);
+    //         cards[i].appendChild(role);
+    //         cards[i].appendChild(pic);
+    //         cards[i].appendChild(status);
+    //     }
+    //     // if game in progress TODO:
+    //     if (true) {
+    //         // do canvas init
+    //         socket.emit("canvas init", "newcomer requesting canvas data");
+    //     }
+    // });
+
+    socket.emit("canvas init", "newcomer requesting canvas data");
+
+    socket.on("synchronize canvas re", () => {
+        // get current drawer canvas
+    });
+    socket.on("render players re", (players) => {
+        // TODO: refactor update players and pts
         cards.forEach((e) => {
             e.innerHTML = "";
         });
-        console.log(`${players[players.length-1].name} joined the game`);
-        console.log("players", players);
-        // players.forEach((e) => {
-        //     // let card = document.createElement("div");
-        //     // card.classList.add("card");
-        //     // card.classList.add("skewed-border-player");
-        //     // 
-        //     let role = document.createElement("div");
-        //     role.classList.add("role");
-        //     let pic = document.createElement("div");
-        //     pic.classList.add("pic");
-        //     let status = document.createElement("div");
-        //     status.classList.add("status");
-        //     let playerName = document.createElement("div");
-        //     playerName.classList.add("name");
-        //     playerName.textContent = `id: ${e.name}`;
-        //     let score = document.createElement("div");
-        //     score.classList.add("score");
-        //     score.textContent = `pts: ${e.score}`;
-        //     status.appendChild(playerName);
-        //     status.appendChild(score);
-        //     // card.appendChild(role);
-        //     // card.appendChild(pic);
-        //     // card.appendChild(status);
-        //     // left.appendChild(card);
-        // });
         for (let i = 0; i < players.length; i++) {
             let role = document.createElement("div");
             role.classList.add("role");
@@ -138,44 +158,13 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             cards[i].appendChild(pic);
             cards[i].appendChild(status);
         }
-        // if game in progress TODO:
-        if (true) {
-            // do canvas init
-            socket.emit("canvas init", "newcomer requesting canvas data");
-        }
     });
+
     socket.on("update score", (players) => {
         // let players = gameStatus.players;
         cards.forEach((e) => {
             e.innerHTML = "";
         });
-        // players.forEach((e) => {
-        //     // let card = document.createElement("div");
-        //     // card.classList.add("card");
-        //     // card.classList.add("skewed-border-player");
-        //     // 
-        //     let role = document.createElement("div");
-        //     role.classList.add("role");
-        //     let pic = document.createElement("div");
-        //     pic.classList.add("pic");
-        //     let status = document.createElement("div");
-        //     status.classList.add("status");
-        //     let playerName = document.createElement("div");
-        //     playerName.classList.add("name");
-        //     playerName.textContent = `id: ${e.name}`;
-        //     let score = document.createElement("div");
-        //     score.classList.add("score");
-        //     score.textContent = `pts: ${e.score}`;
-        //     // let next = document.createElement("div");
-        //     // next.classList.add("next");
-        //     status.appendChild(playerName);
-        //     status.appendChild(score);
-        //     // status.appendChild(next);
-        //     card.appendChild(role);
-        //     card.appendChild(pic);
-        //     card.appendChild(status);
-        //     // left.appendChild(card);
-        // });
         for (let i = 0; i < players.length; i++) {
             let role = document.createElement("div");
             role.classList.add("role");
@@ -198,10 +187,9 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             cards[i].appendChild(status);
         }
     });
+
     form.onsubmit = (e) => {
         e.preventDefault();
-        // socket.name = name;
-        // socket.emit("chat message", `${name}: ${m.value}`);
         socket.emit("chat message", {
             name: name,
             answer: m.value,
@@ -426,7 +414,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     onResize();
 
     socket.on("canvas init", (msg) => {
-        // console.log(msg)
+        // TODO: try always put canvas data on server
         // only drawer can see this
         // grab the context from your destination canvas
         let png = canvas.toDataURL();
@@ -434,7 +422,9 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         socket.emit("fresh canvas", png);
     });
     // recieve drawer canvas
-    socket.on("fresh canvas", (data) => {
+
+    // TODO: under construction
+    socket.on("fresh canvas", (data) => { // guessing
         // only newcomer will see this
         // console.log("fresh canvas revieced");
         let img = new Image();
@@ -447,6 +437,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         // img could be HTML Image, Video, Canvas Element
         // console.log("draw img on canvas");
     });
+
 
     function drawLine(x0, y0, x1, y1, color, emit) {
         ctx.beginPath();
@@ -464,7 +455,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         let w = canvas.width;
         let h = canvas.height;
 
-        socket.emit("drawing", {
+        socket.emit("drawing", { // drawing
             x0: x0 / w,
             y0: y0 / h,
             x1: x1 / w,
@@ -498,11 +489,6 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         current.x = e.clientX - frame.offsetLeft;
         current.y = e.clientY - frame.offsetTop;
     }
-
-    function onColorUpdate(e) {
-        current.color = e.target.className.split(" ")[1];
-    }
-
     // limit the number of events per second
     function throttle(callback, delay) {
         let previousCall = new Date().getTime();

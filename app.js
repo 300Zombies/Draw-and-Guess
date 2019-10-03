@@ -67,21 +67,18 @@ class Player {
         this.id = id;
         this.score = 0;
         this.drawing = false;
-        this.haveDrawn = false;
+        // this.haveDrawn = false;
         this.picture = picture;
     }
 }
 let game = new Game();
 app.post("/login/facebook", (req, res) => {
-    const fbToken = req.body.token; // aquire fb token from req.body
+    const fbToken = req.body.token;
     const url = `https://graph.facebook.com/me?fields=id,name,picture.width(160).height(160)&access_token=${fbToken}`;
-    request(url, async (error, response, body) => { // request user info
+    request(url, (error, response, body) => {
         if (!error && response.statusCode == 200) {
-            // this user has logged into fb, and is a verified user.
             const fbName = JSON.parse(body).name;
             const fbPicture = JSON.parse(body).picture.data.url;
-            console.log("name" + fbName, "pic" + fbPicture)
-            console.log("facebook signin success");
             res.json({
                 name: fbName,
                 picture: fbPicture
@@ -92,44 +89,38 @@ app.post("/login/facebook", (req, res) => {
     });
 });
 app.get("/knockknock", (req, res) => {
-    if (game.players.length < 6) {
+    // TODO: check if name duplicated
+    if (game.players.length < 7) {
         res.send({
-            haveSeats: true,
-            seats: 7 - game.players.length,
-            message: "還有位置唷"
+            message: `還有 ${7 - game.players.length} 個位置`
         });
     } else {
         res.send({
-            haveSeats: false,
-            seats: 7 - game.players.length,
             message: "沒有位置了"
         });
     }
 });
 io.on("connection", (socket) => {
     console.log("a user connected");
-    socket.on("join room", (player) => { // ok
-        // check if name duplicated
+    socket.on("join room", (player) => {
         game.players.push(new Player(player.name, player.picture, socket.id));
-
-        // drawer assignment should be in start game event
-        if (game.players.length === 1) {
-            // first player == default drawer
-            game.players[0].drawing = true;
+        let i = game.players.findIndex((e) => { // find drawer
+            return e.drawing === true
+        });
+        if (i === -1) { // no drawer
+            game.players[0].drawing = true; // first player is drawer
+            socket.emit("show game start"); // info control
+        } else {
+            socket.emit("show wait for start");
         }
-        // pass latest players to frontend
-        // let gameStatus = {
-        //     on: game.on,
-        //     now: game.now,
-        //     players: game.players
-        // }
-        io.emit("render player", game.players);
+        // socket.emit("synchronize canvas re"); // TODO:
+        // socket.emit("synchronize timebar"); // TODO:
+        io.emit("render players re", game.players);
     });
     socket.on("chat message", (player) => { // ok
         // check current player number every chat event
-        let playing = game.players.length;
         let msg;
-        if (player.answer === game.topic) { // check if hit
+        if (game.on && player.answer === game.topic) { // check if hit
             // hit and calculate score
             let i = game.players.findIndex((e) => { // e === elements
                 return e.id === socket.id
@@ -137,9 +128,9 @@ io.on("connection", (socket) => {
             game.players[i].score += 35;
             socket.emit("you hit");
             io.emit("update score", game.players);
-            msg = `${player.name}: HIT THE ANSWER!!`;
+            msg = `${player.name}猜對了!!`;
             game.guessed += 1;
-            // TODO: over 100 and masterpiece
+            // over 100 and masterpiece
             let result = game.players.filter((player) => {
                 return player.score >= 100;
             });
@@ -149,9 +140,8 @@ io.on("connection", (socket) => {
                     return prev.score > curr.score ? prev : curr
                 });
             }
-            if (game.guessed === playing - 1) { // masterpiece event
-                clearTimeout(game.timer); // break drawing phase
-                // change drawer
+            if (game.guessed === game.players.length - 1) { // masterpiece event
+                clearTimeout(game.timer); // end drawing phase
                 let i = game.players.findIndex((e) => {
                     return e.drawing === true;
                 });
@@ -177,7 +167,6 @@ io.on("connection", (socket) => {
         } else {
             msg = `${player.name}: ${player.answer}`;
         }
-        // emit to all sockets including event sender
         io.emit("chat message", msg);
     });
     socket.on("disconnect", () => { // TODO: incomplete
@@ -185,6 +174,7 @@ io.on("connection", (socket) => {
             console.log(game.players)
             game.on = false;
         }
+        console.log("is game on?", game.on);
         // player disconnect while game started, especially drawing persion
         console.log("user disconnected");
         // let i = players.findIndex(e => e.id === socket.id);
@@ -230,6 +220,8 @@ io.on("connection", (socket) => {
         io.emit("update score", game.players);
         // prevent error
     });
+
+
     // canvas sync
     socket.on("canvas init", (msg) => { // ok
         console.log(msg)
@@ -241,11 +233,17 @@ io.on("connection", (socket) => {
         // send to current drawer
         io.to(game.players[i].id).emit("canvas init", "server resquesting canvas data");
     });
+
+
+    //  TODO: under construction
     socket.on("fresh canvas", (img) => {
         console.log("socket.id request canvas", game.players[game.players.length - 1].id)
         // send to newcomer
         io.to(game.players[game.players.length - 1].id).emit("fresh canvas", img);
     });
+
+
+
     socket.on("drawing", (data) => {
         // emit to all socket BUT event sender
         socket.broadcast.emit("drawing", data);

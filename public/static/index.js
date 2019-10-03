@@ -2,7 +2,7 @@ const roomStatus = document.querySelector("#room-status");
 const play = document.querySelector("#play");
 play.addEventListener("click", async (e) => {
     e.preventDefault();
-    let gameStatus = await fetch("/knockknock", {
+    let result = await fetch("/knockknock", {
             method: "GET"
         })
         .then((res) => {
@@ -14,18 +14,15 @@ play.addEventListener("click", async (e) => {
         .catch((err) => {
             console.log(err);
         });
-    if (gameStatus.haveSeats) {
-        roomStatus.textContent = `還有${gameStatus.seats}個位置`;
-        sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));
-        sessionStorage.setItem("nickname", nickname.value);
-        window.location.href = "/gameroom.html";
-    } else {
-        roomStatus.textContent = "沒有位置了";
-    }
+    roomStatus.textContent = result.message;
     if (nickname.value === "" || nickname.value === undefined) {
         portrait.style.backgroundImage = `url("../img/anonymous-250.jpg")`;
         nickname.value = "Anonymous"; // Anonymous
     }
+    sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));
+    sessionStorage.setItem("nickname", nickname.value);
+    window.location.href = "/gameroom.html";
+
     // sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));
     // sessionStorage.setItem("nickname", nickname.value);
     // window.location.href = "/gameroom.html";
@@ -37,11 +34,7 @@ fetch("/knockknock", {
         return res.json();
     })
     .then((result) => {
-        if (result.haveSeats) {
-            roomStatus.textContent = `還有${result.seats}個位置`;
-        } else {
-            roomStatus.textContent = "沒有位置了";
-        }
+        roomStatus.textContent = result.message;
     })
     .catch((err) => {
         console.log(err);
