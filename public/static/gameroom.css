@@ -213,30 +213,17 @@ main {
     transition: 0.5s ease;
 }
 
-.info-btn {
-    position: relative;
-    top: 35%;
-    width: 25%;
-    height: 30%;
-    border: 1px solid #fff;
-    border-radius: 12px;
-    text-align: center;
-    padding-top: 5px;
-}
-
-.select-btn {
-    position: relative;
-    top: 35%;
-    width: 25%;
-    height: 30%;
-    border: 1px solid #fff;
-    border-radius: 12px;
-    text-align: center;
-    padding-top: 5px;
-}
-
 .info-btn,
 .select-btn {
+    position: relative;
+    top: 35%;
+    width: 25%;
+    height: 30%;
+    border: 1px solid #fff;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
 }
 

@@ -63,16 +63,17 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     });
     socket.on("show game start", () => {
         info.classList.remove("deactivated");
-        headline.className = "";
-        headline.classList.add("start-h1");
+        headline.className = "start-h1";
+        // headline.className = "";
+        // headline.classList.add("start-h1");
         infoBtns.forEach((e) => {
             e.classList.remove("deactivated")
         });
     });
     socket.on("show wait for start", () => {
         info.classList.remove("deactivated");
-        headline.className = "";
-        headline.classList.add("wait-h1");
+        headline.className = "wait-h1";
+        // headline.classList.add("wait-h1");
         // TODO: show apng
     });
     // synchronize canvas on connection
@@ -82,7 +83,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         // get current drawer canvas
     });
 
-    socket.on("render players re", (players) => {
+    socket.on("render players", (players) => {
         cards.forEach((e) => {
             e.innerHTML = "";
         });
@@ -149,11 +150,12 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         nextOne.textContent = `下一個是 ${player.next.name}`;
     });
     socket.on("time up", () => { // next drawer only
-        // status === undefined if no value
         socket.emit("wait 10 sec");
     });
-    socket.on("block canvas and chat", () => {
+    socket.on("disable canvas", () => {
         barrier.classList.remove("deactivated");
+    })
+    socket.on("disable chat", () => {
         m.value = "";
         m.disabled = true;
         sendBtn.disabled = true;
@@ -162,7 +164,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     socket.on("frontend timer", (expired) => {
         // everyone gets the countdown
         // let sec = (expired - Date.now()) / 1000;
-        let sec = ((expired - Date.now()) / 1000) + 2;
+        let sec = ((expired - Date.now()) / 1000) + 0.5;
         timerBox.removeChild(countdown);
         timerBox.appendChild(countdown);
         countdown.style.animation = `timebar ${sec}s linear`;
@@ -211,7 +213,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     });
     socket.on("start drawing", () => {
         // control drawer frontend element
-        current.color = "#fff";
+        current.color = "#ffffff";
         countdown.classList.add("running");
         console.log("im drawing!");
         // disable canvas barrier and info
@@ -257,7 +259,6 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         info.classList.remove("deactivated");
         nextOne.classList.remove("deactivated");
         nextOne.textContent = `下一個是 ${data.next.name}`;
-        // reset timeBar, start topic picking
         m.diabled = true;
         sendBtn.disable = true;
         console.log(`answer is ${data.topic}`);
@@ -349,7 +350,6 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             ctx.drawImage(img, 0, 0);
         }
         // img could be HTML Image, Video, Canvas Element
-        // console.log("draw img on canvas");
     });
 
 
