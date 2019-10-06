@@ -164,11 +164,10 @@ io.on("connection", (socket) => {
         // player disconnect while game started, especially drawing persion
         console.log("user disconnected");
         // let i = players.findIndex(e => e.id === socket.id);
+        console.log(game.players)
         let i = game.players.findIndex((e) => {
-            return e.id === socket.id
+            return e.id === socket.id // get to know who disconnected
         });
-        // update players and drawing status
-        // handle last player disconnect
         if (game.players[i].drawing === true) {
             game.last = game.players[i];
             clearTimeout(game.timer);
@@ -189,6 +188,10 @@ io.on("connection", (socket) => {
             });
         }
         game.players.splice(i, 1);
+        if (game.players.length === 0) {
+            console.log(game.players)
+            game.on = false;
+        }
         console.log(game.players);
         io.emit("render players", game.players);
     });
@@ -232,19 +235,19 @@ io.on("connection", (socket) => {
         game.guessed = 0;
         game.countdown(10 * 1000, () => { // timer
             // if timeout change drawing status next one pick topics
-            console.log(socket.id, "has skipped the turn");
+            console.log(socket.id, "has skipped the turn"); // FIXME:
             let i = game.players.findIndex((e) => {
                 return e.drawing === true;
             });
+            game.last = game.players[i];
             // emit last and next to skipped screen
-            game.players[i].drawing = false; // assign next
+            game.players[i].drawing = false;
 
             i = i + 1 === game.players.length ? 0 : i + 1;
             game.players[i].drawing = true;
             io.to(game.players[i].id).emit("time up");
-
             game.next = game.players[i];
-            game.last = game.players[i];
+
             let expired = Date.now() + (10 * 1000);
             io.emit("player skipped", {
                 last: game.last,
