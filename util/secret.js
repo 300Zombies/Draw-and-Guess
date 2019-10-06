@@ -1,5 +1,5 @@
 const secret = {
-    db: "( ಠ_ಠ)",
-    pwd: "(,,ﾟДﾟ)"
+    db: "gartic",
+    pwd: "a02750687138"
 }
 module.exports = secret;
