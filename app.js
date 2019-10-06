@@ -137,7 +137,7 @@ io.on("connection", (socket) => {
                 let i = game.players.findIndex((e) => {
                     return e.drawing === true;
                 });
-                game.players[i].drawing = false; // assign next
+                game.players[i].drawing = false;
 
                 i = i + 1 === game.players.length ? 0 : i + 1;
                 game.players[i].drawing = true;
@@ -157,10 +157,10 @@ io.on("connection", (socket) => {
         io.emit("chat message", msg);
     });
     socket.on("disconnect", () => { // TODO: incomplete
-        if (game.players.length === 0) {
-            console.log(game.players)
-            game.on = false;
-        }
+        // if (game.players.length === 0) {
+        //     console.log(game.players)
+        //     game.on = false;
+        // }
         // player disconnect while game started, especially drawing persion
         console.log("user disconnected");
         // let i = players.findIndex(e => e.id === socket.id);
@@ -193,7 +193,7 @@ io.on("connection", (socket) => {
         io.emit("render players", game.players);
     });
     // canvas sync
-    socket.on("canvas init", (msg) => {
+    socket.on("canvas init", (msg) => { // TODO: combine to on connection
         console.log(msg)
         let i = game.players.findIndex((e) => {
             return e.drawing === true;
@@ -201,7 +201,6 @@ io.on("connection", (socket) => {
         console.log("current drawer socket id =", game.players[i].id);
         io.to(game.players[i].id).emit("canvas init", "server resquesting canvas data");
     });
-
     socket.on("fresh canvas", (img) => { //  TODO: under construction
         console.log("socket.id request canvas", game.players[game.players.length - 1].id)
         io.to(game.players[game.players.length - 1].id).emit("fresh canvas", img);
