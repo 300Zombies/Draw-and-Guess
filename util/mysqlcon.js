@@ -1,6 +1,7 @@
 // MySQL Initialization
 const secret = require("./secret");
 const mysql = require("mysql");
+console.log(secret)
 const pool = mysql.createPool({
 	connectionLimit: 100,
 	host: "localhost",
