@@ -147,10 +147,7 @@ io.on("connection", (socket) => {
         io.emit("chat message", msg);
     });
     socket.on("disconnect", () => {
-        console.log(socket.id, "disconnected")
         let i = game.players.findIndex((e) => {
-            console.log("e.id", e.id)
-            console.log("socket.id", socket.id)
             return e.id === socket.id
         });
         if (game.players[i].drawing === true) {
@@ -181,7 +178,7 @@ io.on("connection", (socket) => {
         let i = game.players.findIndex((e) => {
             return e.drawing === true;
         });
-        io.to(game.players[i].id).emit("canvas init", "server resquesting canvas data");
+        io.to(game.players[i].id).emit("canvas init");
     });
     socket.on("fresh canvas", (img) => { //  TODO: under construction
         io.to(game.players[game.players.length - 1].id).emit("fresh canvas", img);

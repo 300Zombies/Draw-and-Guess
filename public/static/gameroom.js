@@ -60,7 +60,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         headline.className = "wait-h1";
         // TODO: show apng
     });
-    socket.emit("canvas init", "newcomer requesting canvas data");
+    socket.emit("canvas init");
     // socket.on("synchronize canvas re", () => {
     // get current drawer canvas
     // });
