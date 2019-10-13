@@ -44,6 +44,8 @@ One person draws a random assigned topic and others guess what it is within a li
 - Facebook SDK: Facebook Login
 
 # Architecture
+![](https://i.imgur.com/k2YvmgS.jpg)
+
 # Main Features
 
 - Real-time interactions between clients and server.
