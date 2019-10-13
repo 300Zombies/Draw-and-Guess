@@ -89,7 +89,7 @@ app.get("/knockknock", (req, res) => {
 });
 io.on("connection", (socket) => {
     socket.on("join room", (player) => {
-        game.players.push(new Player(player.name, player.picture, socket.id));
+        game.add(new Player(player.name, player.picture, socket.id));
         let i = game.players.findIndex((e) => {
             return e.drawing === true
         });
@@ -107,7 +107,7 @@ io.on("connection", (socket) => {
     socket.on("chat message", (player) => { // ok
         let msg;
         if (game.on && player.answer === game.topic) {
-            msg = `${player.name}猜對了!!`;
+            msg = `${player.name}: 猜對了!!`;
             let i = game.players.findIndex((e) => {
                 return e.id === socket.id
             });
@@ -191,7 +191,7 @@ io.on("connection", (socket) => {
     });
     socket.on("game start", async () => {
         if (game.topicPool.length <= 2) {
-            game.on = true;
+            game.on = true; // TODO: wrong logic
             game.guessed = 0;
             game.topicPool = await mysql.con(`select title from animals`);
             game.topicPool = game.topicPool.map((e) => {
@@ -279,3 +279,6 @@ io.on("connection", (socket) => {
         });
     });
 });
+
+module.exports = game;
+module.exports = Player;
