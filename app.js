@@ -280,5 +280,7 @@ io.on("connection", (socket) => {
     });
 });
 
-module.exports = game;
-module.exports = Player;
+module.exports = {
+    game: game,
+    player: Player
+}
