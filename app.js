@@ -7,57 +7,15 @@ const server = app.listen(3000, () => {
 });
 const request = require("request");
 const io = require("socket.io").listen(server);
+const Game = require("./globalobj/obj.js").Game;
+const Player = require("./globalobj/obj.js").Player;
+
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
-class Game {
-    constructor() {
-        this.on = false;
-        this.players = [];
-        this.curr = "";
-        this.next = "";
-        this.winner = "";
-        this.topicPool = [];
-        this.topic = "";
-        this.timer = "";
-        this.interval = "";
-        this.guessed = 0;
-        this.now = 0;
-        this.finished = false;
-    }
-    add(player) {
-        this.players.push(player)
-    }
-    shuffle(arr) { // The Fisher–Yates shuffle
-        for (let i = arr.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-    }
-    topicPair(arr) {
-        let topic = arr.splice(0, 2);
-        return topic
-    }
-    countdown(milsec, cb) {
-        // this.interval = setInterval(() => {
-        //     game.now++;
-        // }, 1000);
-        this.timer = setTimeout(() => {
-            cb();
-        }, milsec);
-    }
-}
-class Player { // player object
-    constructor(name, picture, id) {
-        this.name = name;
-        this.id = id;
-        this.score = 0;
-        this.drawing = false;
-        this.picture = picture;
-    }
-}
+
 let game = new Game();
 app.post("/login/facebook", (req, res) => {
     const fbToken = req.body.token;
@@ -104,13 +62,17 @@ io.on("connection", (socket) => {
         // socket.emit("synchronize timebar"); // TODO:
         io.emit("render players", game.players);
     });
-    socket.on("chat message", (player) => { // ok
+    socket.on("chat message", (player) => {
         let msg;
+        let i = game.players.findIndex((e) => {
+            return e.id === socket.id
+        });
         if (game.on && player.answer === game.topic) {
-            msg = `${player.name}: 猜對了!!`;
-            let i = game.players.findIndex((e) => {
-                return e.id === socket.id
-            });
+            // msg = `${player.name}: 猜對了!!`;
+            // let i = game.players.findIndex((e) => {
+            //     return e.id === socket.id
+            // });
+            msg = `${game.players[i].name}: 猜對了!!`;
             game.players[i].score += 35;
             socket.emit("disable chat");
             io.emit("render players", game.players);
@@ -142,7 +104,7 @@ io.on("connection", (socket) => {
                 game.guessed = 0;
             }
         } else {
-            msg = `${player.name}: ${player.answer}`;
+            msg = `${game.players[i].name}: ${player.answer}`;
         }
         io.emit("chat message", msg);
     });
@@ -279,8 +241,3 @@ io.on("connection", (socket) => {
         });
     });
 });
-
-module.exports = {
-    game: game,
-    player: Player
-}

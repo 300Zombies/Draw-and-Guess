@@ -1,7 +1,8 @@
-let app = require("./app.js");
+let Game = require("./globalobj/obj.js").Game;
+let Player = require("./globalobj/obj.js").Player;
 let mysql = require("./util/mysqlcon");
-let game = app.game;
-let Player = app.player;
+let game = new Game();
+
 test("test database query", async () => {
     game.topicPool = await mysql.con(`select title from animals`);
     game.topicPool = game.topicPool.map((e) => {
@@ -18,8 +19,11 @@ test("test player array", () => {
     expect(typeof game.players).toBe("object");
     expect(game.players.length).toBeGreaterThan(0);
     expect(game.players[0].name).toBe("Jest");
+    game.add(new Player("", "", ""));
+    expect(game.players.length).toBeGreaterThan(0);
+    expect(game.players.length).toBe(2);
+    expect(game.players[1].name).toBe("Anonymous");
 });
-
 // jest.useFakeTimers(); for global use
 test("timer function test", () => {
     jest.useFakeTimers();

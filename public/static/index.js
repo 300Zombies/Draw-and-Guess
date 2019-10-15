@@ -15,12 +15,14 @@ play.addEventListener("click", async (e) => {
             console.log(err);
         });
     roomStatus.textContent = result.message;
-    if (nickname.value === "" || nickname.value === undefined) {
-        portrait.style.backgroundImage = `url("../img/anonymous-250.jpg")`;
-        nickname.value = "Anonymous"; // Anonymous
-    }
+    // if (nickname.value === "" || nickname.value === undefined) {
+    //     portrait.style.backgroundImage = `url("../img/anonymous-250.jpg")`;
+    //     nickname.value = "Anonymous"; // Anonymous
+    // }
     sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));
     sessionStorage.setItem("nickname", nickname.value);
+    console.log(sessionStorage.getItem("portrait"))
+    console.log(sessionStorage.getItem("nickname"))
     window.location.href = "/gameroom.html";
 
     // sessionStorage.setItem("portrait", window.getComputedStyle(portrait).getPropertyValue("background-image"));

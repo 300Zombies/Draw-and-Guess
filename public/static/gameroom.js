@@ -33,6 +33,9 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
             e.classList.remove("deactivated");
         });
     });
+    btnN.addEventListener("click", () => {
+        window.location.href = "/gameroom.html";
+    })
     selectBtns.forEach((e) => {
         e.addEventListener("click", function () {
             socket.emit("topic picked", this.textContent);
@@ -93,7 +96,7 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     form.onsubmit = (e) => {
         e.preventDefault();
         socket.emit("chat message", {
-            name: name,
+            // name: name,
             answer: m.value,
             id: socket.id
         });
@@ -170,7 +173,6 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
         sendBtn.disable = true;
     })
     socket.on("start guessing", () => {
-        console.log("start guessing")
         info.classList.add("deactivated");
         sendBtn.disabled = false;
         m.disabled = false;
@@ -184,7 +186,6 @@ window.addEventListener("load", () => { // change jQuery back to vanilla JavaScr
     socket.on("start drawing", () => {
         current.color = "#ffffff";
         countdown.classList.add("running");
-        console.log("im drawing!");
         barrier.classList.add("deactivated");
         info.classList.add("deactivated");
         infoBtns.forEach((e) => {
