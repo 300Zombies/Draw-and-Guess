@@ -1,5 +1,5 @@
-let Game = require("./globalobj/obj.js").Game;
-let Player = require("./globalobj/obj.js").Player;
+let Game = require("./globalobj/obj").Game;
+let Player = require("./globalobj/obj").Player;
 let mysql = require("./util/mysqlcon");
 let game = new Game();
 
@@ -26,7 +26,7 @@ test("test player array", () => {
 });
 // jest.useFakeTimers(); for global use
 test("timer function test", () => {
-    jest.useFakeTimers();
+    jest.useFakeTimers(); // for local use
     game.countdown(1000, () => {
         console.log("time up")
     });
