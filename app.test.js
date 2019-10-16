@@ -20,7 +20,7 @@ test("test player array", () => {
     expect(game.players.length).toBeGreaterThan(0);
     expect(game.players[0].name).toBe("Jest");
     game.add(new Player("", "", ""));
-    expect(game.players.length).toBeGreaterThan(0);
+    expect(game.players.length).toBeGreaterThan(1);
     expect(game.players.length).toBe(2);
     expect(game.players[1].name).toBe("Anonymous");
 });
