@@ -67,7 +67,7 @@ io.on("connection", (socket) => {
         let i = game.players.findIndex((e) => {
             return e.id === socket.id
         });
-        if (game.on && player.answer === game.topic) {
+        if (player.answer === game.topic) {
             // msg = `${player.name}: 猜對了!!`;
             // let i = game.players.findIndex((e) => {
             //     return e.id === socket.id
@@ -112,6 +112,8 @@ io.on("connection", (socket) => {
         let i = game.players.findIndex((e) => {
             return e.id === socket.id
         });
+        console.log("all players", game.players)
+        console.log("current disconnect player", game.players[i])
         if (game.players[i].drawing === true) {
             game.curr = game.players[i];
             clearTimeout(game.timer);
@@ -131,9 +133,9 @@ io.on("connection", (socket) => {
         }
         i = i - 1 === -1 ? game.players.length - 1 : i - 1;
         game.players.splice(i, 1);
-        if (game.players.length === 0) {
-            game.on = false;
-        }
+        // if (game.players.length === 0) {
+        //     game.on = false;
+        // }
         io.emit("render players", game.players);
     });
     socket.on("canvas init", () => { // TODO: combine to on connection
@@ -153,7 +155,7 @@ io.on("connection", (socket) => {
     });
     socket.on("game start", async () => {
         if (game.topicPool.length <= 2) {
-            game.on = true; // TODO: wrong logic
+            // game.on = true; // TODO: wrong logic
             game.guessed = 0;
             game.topicPool = await mysql.con(`select title from animals`);
             game.topicPool = game.topicPool.map((e) => {
