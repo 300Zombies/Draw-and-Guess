@@ -98,7 +98,8 @@ io.on("connection", (socket) => {
                 io.to(game.players[i].id).emit("time up");
                 let expired = Date.now() + (10 * 1000);
                 io.emit("frontend timer", expired);
-                io.emit("block canvas and chat");
+                io.emit("disable canvas");
+                io.emit("disable chat");
                 io.emit("hide canvas panel");
                 io.emit("masterpiece", game.next);
                 game.guessed = 0;
