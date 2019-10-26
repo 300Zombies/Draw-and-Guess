@@ -112,8 +112,8 @@ io.on("connection", (socket) => {
         let i = game.players.findIndex((e) => {
             return e.id === socket.id
         });
-        console.log("all players", game.players)
-        console.log("current disconnect player", game.players[i])
+        console.log("all", game.players)
+        // console.log("i", game.players[i])
         if (game.players[i].drawing === true) {
             game.curr = game.players[i];
             clearTimeout(game.timer);
@@ -130,8 +130,10 @@ io.on("connection", (socket) => {
                 curr: game.curr,
                 next: game.next
             });
+            i = i - 1 === -1 ? game.players.length - 1 : i - 1;
         }
-        i = i - 1 === -1 ? game.players.length - 1 : i - 1;
+        // i = i - 1 === -1 ? game.players.length - 1 : i - 1;
+        console.log("spliced i", i)
         game.players.splice(i, 1);
         // if (game.players.length === 0) {
         //     game.on = false;
