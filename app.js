@@ -160,7 +160,7 @@ io.on("connection", (socket) => {
         if (game.topicPool.length <= 2) {
             // game.on = true; // TODO: wrong logic
             game.guessed = 0;
-            game.topicPool = await mysql.con(`select title from AppWorksSchool2019Summer`);
+            game.topicPool = await mysql.con(`select title from animals`);
             game.topicPool = game.topicPool.map((e) => {
                 return e.title
             });
