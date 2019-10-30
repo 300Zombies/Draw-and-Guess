@@ -134,7 +134,7 @@ io.on("connection", (socket) => {
             i = i - 1 === -1 ? game.players.length - 1 : i - 1;
         }
         // i = i - 1 === -1 ? game.players.length - 1 : i - 1;
-        console.log("spliced i", i)
+        // console.log("spliced i", i)
         game.players.splice(i, 1);
         // if (game.players.length === 0) {
         //     game.on = false;
@@ -160,7 +160,7 @@ io.on("connection", (socket) => {
         if (game.topicPool.length <= 2) {
             // game.on = true; // TODO: wrong logic
             game.guessed = 0;
-            game.topicPool = await mysql.con(`select title from animals`);
+            game.topicPool = await mysql.con(`select title from  AppWorksSchool2019Summer`);
             game.topicPool = game.topicPool.map((e) => {
                 return e.title
             });
